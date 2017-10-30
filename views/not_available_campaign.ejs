@@ -1,0 +1,17 @@
+<% layout('/layout/page') -%>
+<h4 class="center">The campaign you requested is not available at the moment</h4><br>
+<%if (hide_branding == 0) { %>
+    <img class="center" src="/img/logo.png"/>
+
+    <br/>
+    <a href="http://persona.ly">http://persona.ly</a>
+<% } %>
+<%if (hide_branding == 0) { %>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+<span class="center" style="font-size: 13px;">Error code : <%-code%></span><br>
+<% } %>

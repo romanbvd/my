@@ -3,7 +3,11 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-    res.send('s');
+    console.log(req.param('$hide_branding'));
+    res.render('not_available_campaign', {
+        hide_branding: req.param('hide_branding'),
+        code: req.param('code')
+    });
 });
 
 module.exports = router;
