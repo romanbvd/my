@@ -7,12 +7,12 @@
 var app = require('../app');
 var debug = require('debug')('persona-tracking-node.git:server');
 var http = require('http');
-
+var config = require('config');
 /**
  * Get port from environment and store in Express.
  */
-
-var port = normalizePort(process.env.PORT || '3000');
+console.log(config.get('port'));
+var port = normalizePort(process.env.PORT || config.get('port'));
 app.set('port', port);
 
 /**

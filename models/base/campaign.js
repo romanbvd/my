@@ -1,33 +1,7 @@
-var events = require('events');
-var util = require('util');
+var mongoose = require('libs/mongoose');
+var Schema = mongoose.Schema;
 
-function Db() {
-    events.EventEmitter.call(this);
-    this.ready = false;
-    this.files = null;
-    this.initialize();
-}
-
-util.inherits(Db, events.EventEmitter);
-
-Db.prototype.initialize = function() {
-    if (this.ready)
-        return this.emit('ready');
-
-    var self = this;
-    require('fs').readdir('.', function(err, files) {
-        if (err)
-            return self.emit('error', err);
-
-        self.files = files;
-        self.ready = true;
-        self.emit('ready');
-    });
-};
-
-module.exports = new Db();
-
-var res = {
+var schema = new Schema({
     _id : ObjectId,
     external_system : String,
     adv_campaign_id : String,
@@ -84,4 +58,15 @@ var res = {
     exclusive_publishers : Array,
     last_status_change : Int64,
     payable_event : Boolean
-};
+});
+
+exports.Campaign = mongoose.model('Campaign', schema);
+
+/*
+var campaign = new Campaign({
+    title: 'new'
+});
+
+campaign.save(function(err, result, affected){
+    console.log(arguments);
+});*/
