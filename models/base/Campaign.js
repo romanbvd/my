@@ -2,7 +2,6 @@ var mongoose = require('libs/mongoose');
 var Schema = mongoose.Schema;
 
 var schema = new Schema({
-    _id : ObjectId,
     external_system : String,
     adv_campaign_id : String,
     advertiser : String,
@@ -11,10 +10,10 @@ var schema = new Schema({
     import_data : String,
     end_date : Boolean,
     timezone : String,
-    daily_cap : Int64,
-    cap_limitation : Int64,
+    daily_cap : Number,
+    cap_limitation : Number,
     traffic_sources_and_restrictions : Object,
-    status : Int64,
+    status : Number,
     convertion_modes : String,
     attribution_window : String,
     cr_blocking_value : String,
@@ -28,17 +27,17 @@ var schema = new Schema({
     app_categories : Array,
     app_size : String,
     app_main_logo : String,
-    app_images : [],
+    app_images : Array,
     playmarket_app_id : String,
     rating_android : String,
     kids_safe : String,
-    kpi_interval : Int64,
-    created_at : Int64,
+    kpi_interval : Number,
+    created_at : Number,
     events_received : Boolean,
-    updated_at : Int64,
+    updated_at : Number,
     is_daily_capped : Boolean,
     title_sub_title : String,
-    readable_id : Int64,
+    readable_id : Number,
     creatives_id : String,
     sub_title : String,
     app_url_2 : String,
@@ -56,17 +55,8 @@ var schema = new Schema({
     targeting_tips : String,
     notes : Object,
     exclusive_publishers : Array,
-    last_status_change : Int64,
+    last_status_change : Number,
     payable_event : Boolean
 });
 
-exports.Campaign = mongoose.model('Campaign', schema);
-
-/*
-var campaign = new Campaign({
-    title: 'new'
-});
-
-campaign.save(function(err, result, affected){
-    console.log(arguments);
-});*/
+module.exports = mongoose.model('Campaign', schema, 'campaigns');

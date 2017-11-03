@@ -1,9 +1,31 @@
 var express = require('express');
+var async = require('async');
 var router = express.Router();
+
+var Campaign = require('models/base/Campaign');
+var MediaProperty = require('models/base/MediaProperty');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: '/' });
+    console.log('s');
+
+    async.parallel([
+        function(callback) {
+            MediaProperty.findOne({readable_id: 1162}, function (err, docs) {
+                callback(err, docs);
+            });
+        },
+        function(callback) {
+            Campaign.findOne({readable_id: 1162}, function (err, docs) {
+                callback(err, docs);
+            });
+        }
+    ], function(err, results) {
+        if(err) throw err;
+        console.log(results);
+        res.render('index', { title: '/' });
+    });
+
 });
 
 router.get('/first_click', function(req, res, next) {

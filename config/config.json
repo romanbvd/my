@@ -1,8 +1,9 @@
 {
     "port" : 3000,
     "mongoose" : {
-        "uri" : "mongodb://localhost/chat",
+        "uri" : "mongodb://localhost/dev_0",
         "options" : {
+            "useMongoClient": true,
             "server" : {
                 "socketOptions" : {
                     "keepAlive" : 1
