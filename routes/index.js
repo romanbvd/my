@@ -28,8 +28,8 @@ router.get('/', function(req, res, next) {
 
 });
 
-router.get('/first_click', function(req, res, next) {
-    res.render('index', { title: 'first_click' });
+router.get('/first_click/:id', function(req, res, next) {
+    res.render('index', { title: req.params.id});
 });
 
 router.get('/callback', function(req, res, next) {
