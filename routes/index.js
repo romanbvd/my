@@ -1,5 +1,8 @@
 var express = require('express');
 var async = require('async');
+var redis = require('redis');
+var client = redis.createClient();
+
 var router = express.Router();
 
 var Campaign = require('models/base/Campaign');
@@ -7,8 +10,12 @@ var MediaProperty = require('models/base/MediaProperty');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    console.log('s');
-
+    client.get("557867ac4e8fb404458b456e_campaign", function(err, reply) {
+        // reply is null when the key is missing
+        console.log(reply);
+        res.render('index', { title: '/' });
+    });
+/*
     async.parallel([
         function(callback) {
             MediaProperty.findOne({readable_id: 1162}, function (err, docs) {
@@ -24,7 +31,7 @@ router.get('/', function(req, res, next) {
         if(err) throw err;
         console.log(results);
         res.render('index', { title: '/' });
-    });
+    });*/
 
 });
 
