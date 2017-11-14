@@ -5,14 +5,18 @@ var client = redis.createClient();
 
 var router = express.Router();
 
-var Campaign = require('models/base/Campaign');
+var Campaign = require('models/redis/Campaign');
+var Subscription = require('models/redis/Subscription');
 var MediaProperty = require('models/base/MediaProperty');
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    client.get("557867ac4e8fb404458b456e_campaign", function(err, reply) {
+    Subscription.getSubscriptionById("55caf7ec4e8fb45c0b8b4643", function(err, subscription) {
+        if(err)next();
+
         // reply is null when the key is missing
-        console.log(reply);
+        console.log(subscription.getTitle());
         res.render('index', { title: '/' });
     });
 /*

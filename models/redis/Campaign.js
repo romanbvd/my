@@ -3,17 +3,18 @@ var client = redis.createClient();
 
 
 function Campaign(data){
-    this._campaignData = (typeof data == 'object') ? data : {};
+    this._data = (typeof data == 'object') ? data : {};
 }
 
-Campaign.prototype = function getTitle(){
-    return this._campaignData.title ? this._campaignData.title : '';
+Campaign.prototype.getTitle = function(){
+    return this._data.title || '';
 };
 
 Campaign.getCampaignById = function(id, callback){
     client.get(id + "_campaign", function(err, reply) {
         if(err) callback(err);
-
+        var res = new Campaign(JSON.parse(reply));
+        console.log(res.getTitle());
         callback(null, new Campaign(JSON.parse(reply)));
     });
 };
