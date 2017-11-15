@@ -1,7 +1,6 @@
 var express = require('express');
 var async = require('async');
-var redis = require('redis');
-var client = redis.createClient();
+var redis = require('libs/redis');
 
 var router = express.Router();
 
@@ -12,9 +11,7 @@ var MediaProperty = require('models/base/MediaProperty');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    Subscription.getSubscriptionById("55caf7ec4e8fb45c0b8b4643", function(err, subscription) {
-        if(err)next();
-
+    redis.get("557867ac4e8fb404458b456e_campaign", function(err, reply) {
         // reply is null when the key is missing
         console.log(subscription.getTitle());
         res.render('index', { title: '/' });
