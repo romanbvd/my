@@ -1,5 +1,5 @@
 {
-  "name": "persona-tracking-node.git",
+  "name": "my",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -10,8 +10,12 @@
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "~4.15.5",
-    "jade": "~1.11.0",
+    "ejs": "*",
+    "ejs-locals" : "*",
     "morgan": "~1.9.0",
-    "serve-favicon": "~2.4.5"
+    "serve-favicon": "~2.4.5",
+    "redis" : "*",
+    "nconf" : "*",
+    "mongoose": "*"
   }
 }
