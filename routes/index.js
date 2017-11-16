@@ -1,38 +1,17 @@
 var express = require('express');
-var async = require('async');
 var redis = require('libs/redis');
 
 var router = express.Router();
 
-var Campaign = require('models/redis/Campaign');
 var Subscription = require('models/redis/Subscription');
-var MediaProperty = require('models/base/MediaProperty');
-
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    redis.get("557867ac4e8fb404458b456e_campaign", function(err, reply) {
+    Subscription.getSubscriptionById("55deba954e8fb4de598b45e9", function(err, subscription) {
         // reply is null when the key is missing
-        console.log(subscription.getTitle());
+        console.log(subscription);
         res.render('index', { title: '/' });
     });
-/*
-    async.parallel([
-        function(callback) {
-            MediaProperty.findOne({readable_id: 1162}, function (err, docs) {
-                callback(err, docs);
-            });
-        },
-        function(callback) {
-            Campaign.findOne({readable_id: 1162}, function (err, docs) {
-                callback(err, docs);
-            });
-        }
-    ], function(err, results) {
-        if(err) throw err;
-        console.log(results);
-        res.render('index', { title: '/' });
-    });*/
 
 });
 

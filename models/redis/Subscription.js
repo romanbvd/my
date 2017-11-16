@@ -1,8 +1,10 @@
-var redis = require('redis');
-var client = redis.createClient();
+var async = require('async');
+
+var redis = require('libs/redis');
 
 var Campaign = require('models/redis/Campaign');
-var MediaProperty = require('models/base/MediaProperty');
+var MediaProperty = require('models/redis/MediaProperty');
+var Publisher = require('models/redis/Publisher');
 
 function Subscription(data){
     this._data = (typeof data == 'object') ? data : {};
@@ -12,28 +14,79 @@ function Subscription(data){
     this._publisher = null;
 }
 
+Subscription.prototype.init = function (callbackResult) {
+    var that = this;
+    async.parallel([
+        function(callback) {
+            MediaProperty.getMediaPropertyById(that.getMediaPropertyId(), function (err, mediaProperty) {
+                callback(err, mediaProperty);
+            });
+        },
+        function(callback) {
+            Campaign.getCampaignById(that.getCampaignId(), function (err, campaign) {
+                callback(err, campaign);
+            });
+        },
+        function(callback) {
+            Publisher.getPublisherById(that.getPublisherId(), function (err, publisher) {
+                callback(err, publisher);
+            });
+        }
+    ], function(err, results) {
+        if(err) throw err;
+
+        that._campaign = results['Campaign'];
+        that._media_property = results['MediaProperty'];
+        that._publisher = results['Publisher'];
+
+        callbackResult();
+    });
+};
+
 Subscription.prototype.getCampaignId = function(){
     return this._data.campaign_id || '';
 };
 
 Subscription.prototype.getCampaign = function(){
+    if(this._campaign){
+        this._campaign = Campaign.getCampaignById(this.getCampaignId());
+    }
 
+    return this._campaign;
 };
 
-Subscription.prototype.getCampaign = function(){
-
+Subscription.prototype.getMediaPropertyId = function(){
+    return this._data.media_property_id || '';
 };
 
-Subscription.prototype.getCampaign = function(){
+Subscription.prototype.getMediaProperty = function(){
+    if(this._media_property){
+        this._media_property = MediaProperty.getMediaPropertyById(this.getMediaPropertyId());
+    }
 
+    return this._media_property;
+};
+
+Subscription.prototype.getPublisherId = function(){
+    return this._data.publisher_id || '';
+};
+
+Subscription.prototype.getPublisher = function(){
+    if(this._publisher){
+        this._publisher = MediaProperty.getPublisherById(this.getPublisherId());
+    }
+
+    return this._publisher;
 };
 
 Subscription.getSubscriptionById = function(id, callback){
-    client.hget('subscriptions_hash', id, function(err, reply) {
+    redis.hget('subscriptions_hash', id, function(err, reply) {
         if(err) callback(err);
-        var res = new Subscription(JSON.parse(reply));
-        console.log(res);
-        callback(null, new Subscription(JSON.parse(reply)));
+
+        var subscription = new Subscription(JSON.parse(reply));
+        subscription.init(function(){
+            callback(null, subscription);
+        });
     });
 };
 
