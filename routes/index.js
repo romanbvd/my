@@ -2,15 +2,12 @@ var express = require('express');
 var redis = require('libs/redis');
 
 var router = express.Router();
-
-var Subscription = require('models/redis/Subscription');
+var Filters = require('models/filters/Filters');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    Subscription.getSubscriptionById("55deba954e8fb4de598b45e9", function(err, subscription) {
-        // reply is null when the key is missing
-        console.log(subscription);
-        res.render('index', { title: '/' });
+    Filters.validateSubscription('55deba954e8fb4de598b45e9', function(err, result){
+        res.render('index', { title: 'sss'});
     });
 
 });

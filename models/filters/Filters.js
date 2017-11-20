@@ -1,13 +1,26 @@
 var async = require('async');
 
-var IspFilter = require('IspFilter');
+var Subscription = require('models/redis/Subscription');
 
-async.waterfall([
-    IspFilter,
-    function(arg1, callback) {
-        // arg1 now equals 'three'
-        callback(null, 'done');
-    }
-], function (err, result) {
-    // result now equals 'done'
-});
+var IspFilter = require('models/filters/IspFilter');
+var MpActiveFilter = require('models/filters/MpActiveFilter');
+
+function Filters(){
+
+}
+
+Filters.validateSubscription = function(id, callbackGeneral) {
+    async.waterfall([
+        function(callback){
+            Subscription.getSubscriptionById("55deba954e8fb4de598b45e9", function(err, subscription) {
+                callback(null, subscription)
+            });
+        },
+        //IspFilter,
+        MpActiveFilter,
+    ],
+    callbackGeneral);
+}
+
+
+module.exports = Filters;

@@ -16,28 +16,28 @@ function Subscription(data){
 
 Subscription.prototype.init = function (callbackResult) {
     var that = this;
-    async.parallel([
-        function(callback) {
+    async.parallel({
+        media_property: function(callback) {
             MediaProperty.getMediaPropertyById(that.getMediaPropertyId(), function (err, mediaProperty) {
                 callback(err, mediaProperty);
             });
         },
-        function(callback) {
+        campaign: function(callback) {
             Campaign.getCampaignById(that.getCampaignId(), function (err, campaign) {
                 callback(err, campaign);
             });
         },
-        function(callback) {
+        publisher: function(callback) {
             Publisher.getPublisherById(that.getPublisherId(), function (err, publisher) {
                 callback(err, publisher);
             });
         }
-    ], function(err, results) {
+    }, function(err, results) {
         if(err) throw err;
 
-        that._campaign = results['Campaign'];
-        that._media_property = results['MediaProperty'];
-        that._publisher = results['Publisher'];
+        that._campaign = results.campaign;
+        that._media_property = results.media_property;
+        that._publisher = results.publisher;
 
         callbackResult();
     });
