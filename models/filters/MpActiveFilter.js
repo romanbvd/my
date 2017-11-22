@@ -2,7 +2,8 @@ var ERR_MESSAGE = 'MP is blocked for advertiser';
 var ERR_CODE = 115;
 
 function MpActiveFilter(subscription, callback){
-    console.log(subscription);
+    console.dir(subscription.getCampaign().getAdvertiserId());
+    console.log(subscription.getMediaProperty());
     callback(null, subscription);
 };
 

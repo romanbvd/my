@@ -9,13 +9,16 @@ function Filters(){
 
 }
 
+function getSubscription(callback){
+    Subscription.getSubscriptionById("55deba954e8fb4de598b45e9", function(err, subscription) {
+        callback(null, subscription)
+    });
+}
+
+
 Filters.validateSubscription = function(id, callbackGeneral) {
     async.waterfall([
-        function(callback){
-            Subscription.getSubscriptionById("55deba954e8fb4de598b45e9", function(err, subscription) {
-                callback(null, subscription)
-            });
-        },
+        getSubscription,
         //IspFilter,
         MpActiveFilter,
     ],

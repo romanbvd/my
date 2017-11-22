@@ -8,6 +8,10 @@ Campaign.prototype.getTitle = function(){
     return this._data.title || '';
 };
 
+Campaign.prototype.getAdvertiserId = function(){
+    return this._data.adv_campaign_id || '';
+};
+
 Campaign.getCampaignById = function(id, callback){
     redis.get(id + "_campaign", function(err, reply) {
         if(err) callback(err);

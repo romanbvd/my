@@ -48,10 +48,6 @@ Subscription.prototype.getCampaignId = function(){
 };
 
 Subscription.prototype.getCampaign = function(){
-    if(this._campaign){
-        this._campaign = Campaign.getCampaignById(this.getCampaignId());
-    }
-
     return this._campaign;
 };
 
