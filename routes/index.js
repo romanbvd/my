@@ -7,6 +7,7 @@ var Filters = require('models/filters/Filters');
 /* GET home page. */
 router.get('/', function(req, res, next) {
     Filters.validateSubscription('55deba954e8fb4de598b45e9', function(err, result){
+        console.log(err);
         res.render('index', { title: 'sss'});
     });
 

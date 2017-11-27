@@ -13,16 +13,14 @@ MediaProperty.prototype.getMediaPropertyId = function(){
 };
 
 MediaProperty.prototype.isBlockedForAdvertiser = function(advertiser_id, callback){
-    redis.get(this.getMediaPropertyId() + '_' . advertiser_id + '_blocked_mp', function(err, reply) {
+    console.log(this.getMediaPropertyId() + '_' + advertiser_id);
+    redis.get(this.getMediaPropertyId() + '_' + advertiser_id + '_blocked_mp', function(err, reply) {
         if(err) callback(err);
 
-        if (empty($blocked_mp)) {
-            return true;
-        }
-
-        return false;
+        var result = (reply == null) ? false : true;
+        callback(null, result);
     });
-}
+};
 
 MediaProperty.getMediaPropertyById = function(id, callback){
     redis.get(id + "_media_property", function(err, reply) {

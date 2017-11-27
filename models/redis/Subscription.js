@@ -56,10 +56,6 @@ Subscription.prototype.getMediaPropertyId = function(){
 };
 
 Subscription.prototype.getMediaProperty = function(){
-    if(this._media_property){
-        this._media_property = MediaProperty.getMediaPropertyById(this.getMediaPropertyId());
-    }
-
     return this._media_property;
 };
 
@@ -68,10 +64,6 @@ Subscription.prototype.getPublisherId = function(){
 };
 
 Subscription.prototype.getPublisher = function(){
-    if(this._publisher){
-        this._publisher = MediaProperty.getPublisherById(this.getPublisherId());
-    }
-
     return this._publisher;
 };
 

@@ -9,13 +9,12 @@ Campaign.prototype.getTitle = function(){
 };
 
 Campaign.prototype.getAdvertiserId = function(){
-    return this._data.adv_campaign_id || '';
+    return this._data.advertiser || '';
 };
 
 Campaign.getCampaignById = function(id, callback){
     redis.get(id + "_campaign", function(err, reply) {
         if(err) callback(err);
-
         callback(null, new Campaign(JSON.parse(reply)));
     });
 };
