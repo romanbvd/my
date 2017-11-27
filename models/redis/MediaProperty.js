@@ -1,4 +1,6 @@
 var redis = require('libs/redis');
+var log = require('libs/log')(module);
+var helper = require('libs/helper');
 
 function MediaProperty(data){
     this._data = (typeof data == 'object') ? data : {};
@@ -12,9 +14,17 @@ MediaProperty.prototype.getMediaPropertyId = function(){
     return this._data._id || '';
 };
 
-MediaProperty.prototype.isBlockedForAdvertiser = function(advertiser_id, callback){
-    console.log(this.getMediaPropertyId() + '_' + advertiser_id);
-    redis.get(this.getMediaPropertyId() + '_' + advertiser_id + '_blocked_mp', function(err, reply) {
+MediaProperty.prototype.isBlockedForAdvertiser = function(advertiserId, callback){
+    var mpId = this.getMediaPropertyId();
+    if(!helper.MongoDb.isValid(mpId)){
+        log.error(helper.MongoDb.INVALID_OBJECT_ID + ' for "mediaPropertyId"');
+    }
+
+    if(!helper.MongoDb.isValid(advertiserId)){
+        log.error(helper.MongoDb.INVALID_OBJECT_ID + ' for "advertiserId"');
+    }
+
+    redis.get(this.getMediaPropertyId() + '_' + advertiserId + '_blocked_mp', function(err, reply) {
         if(err) callback(err);
 
         var result = (reply == null) ? false : true;
