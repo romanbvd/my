@@ -16,6 +16,7 @@
     "serve-favicon": "~2.4.5",
     "redis" : "*",
     "nconf" : "*",
-    "mongoose": "*"
+    "mongoose": "*",
+    "winston": "*"
   }
 }

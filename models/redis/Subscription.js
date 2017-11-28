@@ -43,6 +43,10 @@ Subscription.prototype.init = function (callbackResult) {
     });
 };
 
+Subscription.prototype.getSubscriptionId = function(){
+    return this._data.campaign_id || '';
+};
+
 Subscription.prototype.getCampaignId = function(){
     return this._data.campaign_id || '';
 };

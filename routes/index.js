@@ -2,12 +2,20 @@ var express = require('express');
 var redis = require('libs/redis');
 
 var router = express.Router();
+
 var Filters = require('models/filters/Filters');
+var Click = require('models/Click');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    Filters.validateSubscription('55deba954e8fb4de598b45e9', function(err, result){
-        console.log(err);
+    Filters.validateSubscription(req.query.guid, function(err, subscription){
+        if(!err){
+            //!!!!!!!!!!!!!!!!!!!!!!!!!
+        }
+
+        var click = new Click(null, subscription);
+        click.saveClick();
+        console.log(click.getClickInfo());
         res.render('index', { title: 'sss'});
     });
 

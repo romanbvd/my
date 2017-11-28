@@ -3,6 +3,7 @@ var async = require('async');
 var Subscription = require('models/redis/Subscription');
 
 var IspFilter = require('models/filters/IspFilter');
+var MpExistsFilter = require('models/filters/MpExistsFilter');
 var MpActiveFilter = require('models/filters/MpActiveFilter');
 
 function Filters(){
@@ -15,8 +16,9 @@ Filters.validateSubscription = function(id, callbackGeneral) {
                 callback(null, subscription)
             });
         },
-        //IspFilter,
+        MpExistsFilter,
         MpActiveFilter,
+        //IspFilter,
     ],
     callbackGeneral);
 };
