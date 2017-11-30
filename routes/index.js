@@ -1,5 +1,6 @@
 var express = require('express');
 var redis = require('libs/redis');
+var Ampq = require('libs/ampq');
 
 var router = express.Router();
 
@@ -8,15 +9,20 @@ var Click = require('models/Click');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+
     Filters.validateSubscription(req.query.guid, function(err, subscription){
         if(!err){
             //!!!!!!!!!!!!!!!!!!!!!!!!!
         }
 
-        var click = new Click(null, subscription);
-        click.saveClick();
-        console.log(click.getClickInfo());
-        res.render('index', { title: 'sss'});
+        Ampq.send(function(){
+
+            var click = new Click(null, subscription);
+            click.saveClick();
+            //console.log(click.getClickInfo());
+            res.render('index', { title: 'sss'});
+            console.log('send');
+        });
     });
 
 });
