@@ -1,5 +1,6 @@
 //https://www.cloudamqp.com/blog/2015-05-19-part2-2-rabbitmq-for-beginners_example-and-sample-code-node-js.html
 //https://www.rabbitmq.com/tutorials/tutorial-one-javascript.html
+//https://gist.github.com/carlhoerberg/006b01ac17a0a94859ba
 var amqp = require('amqplib/callback_api');
 var config = require('config');
 var log = require('libs/log')(module);
