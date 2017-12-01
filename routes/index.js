@@ -1,6 +1,6 @@
 var express = require('express');
 var redis = require('libs/redis');
-var Ampq = require('libs/ampq');
+var ampq = require('libs/ampq');
 
 var router = express.Router();
 
@@ -15,14 +15,16 @@ router.get('/', function(req, res, next) {
             //!!!!!!!!!!!!!!!!!!!!!!!!!
         }
 
-        Ampq.send(function(){
 
-            var click = new Click(null, subscription);
-            click.saveClick();
-            //console.log(click.getClickInfo());
-            res.render('index', { title: 'sss'});
-            console.log('send');
-        });
+        var click = new Click(null, subscription);
+
+        res.render('index', { title: 'sss'});
+        console.log('send');
+
+        ampq.publish("", "jobs", new Buffer("work work work"));
+        //click.saveClick();
+        //console.log(click.getClickInfo());
+
     });
 
 });

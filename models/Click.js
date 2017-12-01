@@ -6,7 +6,7 @@ function Click(user_info, subscription){
 Click.prototype.saveClick = function(){
     var clickInfo = this.getClickInfo();
     console.log(clickInfo);
-}
+};
 
 Click.prototype.getClickInfo = function(){
     return {
