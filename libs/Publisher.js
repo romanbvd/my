@@ -57,6 +57,7 @@ Publisher.closeOnErr = function(err) {
 }
 
 Publisher.publish = function (exchange, routingKey, content, callback) {
+    var exchange = '';
     var content = new Buffer(content);
     try {
         Publisher.pubChannel.assertQueue(routingKey, { durable: true }, function(){

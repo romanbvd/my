@@ -1,6 +1,5 @@
 var express = require('express');
-var redis = require('libs/redis');
-var ampq = require('libs/ampq');
+var ampq = require('libs/Publisher');
 
 var router = express.Router();
 
@@ -16,7 +15,7 @@ router.get('/', function(req, res, next) {
         }
 
         var click = new Click(null, subscription);
-        ampq.publish('', 'jobs', "work work work", function(){
+        ampq.publish('jobs', "work work work", function(){
             res.render('index', { title: 'mmm'});
         });
 
