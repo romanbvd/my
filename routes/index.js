@@ -15,16 +15,14 @@ router.get('/', function(req, res, next) {
             //!!!!!!!!!!!!!!!!!!!!!!!!!
         }
 
-
         var click = new Click(null, subscription);
+        ampq.publish('', 'jobs', "work work work", function(){
+            res.render('index', { title: 'mmm'});
+        });
 
-        res.render('index', { title: 'sss'});
-        console.log('send');
-
-        ampq.publish("", "jobs", new Buffer("work work work"));
         //click.saveClick();
         //console.log(click.getClickInfo());
-
+        console.log('send');
     });
 
 });

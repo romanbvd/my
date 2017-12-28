@@ -1,24 +1,19 @@
-//https://www.cloudamqp.com/blog/2015-05-19-part2-2-rabbitmq-for-beginners_example-and-sample-code-node-js.html
-//https://www.rabbitmq.com/tutorials/tutorial-one-javascript.html
-//https://gist.github.com/carlhoerberg/006b01ac17a0a94859ba
 var amqp = require('amqplib/callback_api');
-var config = require('config');
-var log = require('libs/log')(module);
 
-var amqpConn = null;
-var pubChannel = null;
-var offlinePubQueue = [];
+// if the connection is closed or fails to be established at all, we will reconnect
+function Publisher(){
 
-function start(){
-    openConnection();
 }
 
-function openConnection() {
+Publisher.amqpConn = null;
+Publisher.pubChannel = null;
+Publisher.offlinePubQueue = [];
 
-    amqp.connect(config.get('rabbitmq'), function(err, conn) {
+Publisher.start = function(){
+    amqp.connect("amqp://localhost?heartbeat=60", function(err, conn) {
         if (err) {
             console.error("[AMQP]", err.message);
-            return setTimeout(openConnection, 1000);
+            return setTimeout(start, 1000);
         }
         conn.on("error", function(err) {
             if (err.message !== "Connection closing") {
@@ -27,19 +22,17 @@ function openConnection() {
         });
         conn.on("close", function() {
             console.error("[AMQP] reconnecting");
-            return setTimeout(openConnection, 1000);
+            return setTimeout(start, 1000);
         });
         console.log("[AMQP] connected");
-        amqpConn = conn;
-        console.log('here');
-        openChannel();
+        Publisher.amqpConn = conn;
+        Publisher.startPublisher();
     });
 }
 
-
-function openChannel() {
-    amqpConn.createConfirmChannel(function(err, ch) {
-        if (closeOnErr(err)) return;
+Publisher.startPublisher = function() {
+    Publisher.amqpConn.createConfirmChannel(function(err, ch) {
+        if (Publisher.closeOnErr(err)) return;
         ch.on("error", function(err) {
             console.error("[AMQP] channel error", err.message);
         });
@@ -47,37 +40,43 @@ function openChannel() {
             console.log("[AMQP] channel closed");
         });
 
-        pubChannel = ch;
+        Publisher.pubChannel = ch;
         while (true) {
-            var m = offlinePubQueue.shift();
+            var m = Publisher.offlinePubQueue.shift();
             if (!m) break;
-            publish(m[0], m[1], m[2]);
+            Publisher.publish(m[0], m[1], m[2], function () {});
         }
     });
 }
 
-
-function ampqModel(){
-
+Publisher.closeOnErr = function(err) {
+    if (!err) return false;
+    console.error("[AMQP] error", err);
+    Publisher.amqpConn.close();
+    return true;
 }
 
-ampqModel.publish = function(exchange, routingKey, content) {
-    start();
-    console.log(pubChannel);
-    return;
+Publisher.publish = function (exchange, routingKey, content, callback) {
+    var content = new Buffer(content);
     try {
-        pubChannel.publish(exchange, routingKey, content, { persistent: true },
-            function(err, ok) {
-                if (err) {
-                    console.error("[AMQP] publish", err);
-                    offlinePubQueue.push([exchange, routingKey, content]);
-                    pubChannel.connection.close();
-                }
-            });
+        Publisher.pubChannel.assertQueue(routingKey, { durable: true }, function(){
+            Publisher.pubChannel.publish(exchange, routingKey, content, { persistent: true },
+                function(err, ok) {
+                    if (err) {
+                        console.error("[AMQP] publish", err);
+                        Publisher.offlinePubQueue.push([exchange, routingKey, content]);
+                        Publisher.pubChannel.connection.close();
+                    }
+                });
+
+                callback();
+        });
     } catch (e) {
         console.error("[AMQP] publish", e.message);
-        offlinePubQueue.push([exchange, routingKey, content]);
+        Publisher.offlinePubQueue.push([exchange, routingKey, content]);
     }
 };
 
-module.exports = ampqModel;
+Publisher.start();
+
+module.exports = Publisher;
