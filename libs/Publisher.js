@@ -2,18 +2,17 @@ var amqp = require('amqplib/callback_api');
 
 // if the connection is closed or fails to be established at all, we will reconnect
 function Publisher(){
-
+    this.amqpConn = null;
+    this.pubChannel = null;
+    this.offlinePubQueue = [];
 }
 
-Publisher.amqpConn = null;
-Publisher.pubChannel = null;
-Publisher.offlinePubQueue = [];
-
-Publisher.start = function(){
+Publisher.prototype.start = function(){
+    var that = this;
     amqp.connect("amqp://localhost?heartbeat=60", function(err, conn) {
         if (err) {
             console.error("[AMQP]", err.message);
-            return setTimeout(start, 1000);
+            return setTimeout(that.start, 1000);
         }
         conn.on("error", function(err) {
             if (err.message !== "Connection closing") {
@@ -22,17 +21,18 @@ Publisher.start = function(){
         });
         conn.on("close", function() {
             console.error("[AMQP] reconnecting");
-            return setTimeout(start, 1000);
+            return setTimeout(that.start, 1000);
         });
         console.log("[AMQP] connected");
-        Publisher.amqpConn = conn;
-        Publisher.startPublisher();
+        that.amqpConn = conn;
+        that.startPublisher();
     });
 }
 
-Publisher.startPublisher = function() {
-    Publisher.amqpConn.createConfirmChannel(function(err, ch) {
-        if (Publisher.closeOnErr(err)) return;
+Publisher.prototype.startPublisher = function() {
+    var that = this;
+    this.amqpConn.createConfirmChannel(function(err, ch) {
+        if (that.closeOnErr(err)) return;
         ch.on("error", function(err) {
             console.error("[AMQP] channel error", err.message);
         });
@@ -40,33 +40,34 @@ Publisher.startPublisher = function() {
             console.log("[AMQP] channel closed");
         });
 
-        Publisher.pubChannel = ch;
+        that.pubChannel = ch;
         while (true) {
-            var m = Publisher.offlinePubQueue.shift();
+            var m = that.offlinePubQueue.shift();
             if (!m) break;
-            Publisher.publish(m[0], m[1], m[2], function () {});
+            that.publish(m[0], m[1], m[2], function () {});
         }
     });
 }
 
-Publisher.closeOnErr = function(err) {
+Publisher.prototype.closeOnErr = function(err) {
     if (!err) return false;
     console.error("[AMQP] error", err);
-    Publisher.amqpConn.close();
+    this.amqpConn.close();
     return true;
-}
+};
 
-Publisher.publish = function (exchange, routingKey, content, callback) {
+Publisher.prototype.publish = function (routingKey, content, callback) {
+    var that = this;
     var exchange = '';
     var content = new Buffer(content);
     try {
-        Publisher.pubChannel.assertQueue(routingKey, { durable: true }, function(){
-            Publisher.pubChannel.publish(exchange, routingKey, content, { persistent: true },
+        this.pubChannel.assertQueue(routingKey, { durable: true }, function(){
+            that.pubChannel.publish(exchange, routingKey, content, { persistent: true },
                 function(err, ok) {
                     if (err) {
                         console.error("[AMQP] publish", err);
-                        Publisher.offlinePubQueue.push([exchange, routingKey, content]);
-                        Publisher.pubChannel.connection.close();
+                        that.offlinePubQueue.push([exchange, routingKey, content]);
+                        that.pubChannel.connection.close();
                     }
                 });
 
@@ -74,10 +75,22 @@ Publisher.publish = function (exchange, routingKey, content, callback) {
         });
     } catch (e) {
         console.error("[AMQP] publish", e.message);
-        Publisher.offlinePubQueue.push([exchange, routingKey, content]);
+        this.offlinePubQueue.push([exchange, routingKey, content]);
     }
 };
 
-Publisher.start();
+var publisher = new Publisher();
+publisher.start();
 
-module.exports = Publisher;
+
+/*Publisher._instance = null;
+Publisher.getInstance = function(){
+    if(!this._instance){
+        this._instance = new Publisher();
+        this._instance.start();
+    }
+
+    return this._instance;
+};*/
+
+module.exports = publisher;

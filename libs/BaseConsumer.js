@@ -1,16 +1,15 @@
 var amqp = require('amqplib/callback_api');
 
 function Consumer(){
-
+    this.amqpConn = null;
 }
 
-Consumer.amqpConn = null;
-
-Consumer.start = function(){
+Consumer.prototype.start = function(){
+    var that = this;
     amqp.connect("amqp://localhost?heartbeat=60", function(err, conn) {
         if (err) {
             console.error("[AMQP]", err.message);
-            return setTimeout(start, 1000);
+            return setTimeout(that.start, 1000);
         }
         conn.on("error", function(err) {
             if (err.message !== "Connection closing") {
@@ -19,16 +18,18 @@ Consumer.start = function(){
         });
         conn.on("close", function() {
             console.error("[AMQP] reconnecting");
-            return setTimeout(start, 1000);
+            return setTimeout(that.start, 1000);
         });
         console.log("[AMQP] connected");
-        Consumer.amqpConn = conn;
-        Consumer.startWorker();
+
+        that.amqpConn = conn;
+        that.startWorker();
     });
 };
 
-Consumer.startWorker = function() {
-    Consumer.amqpConn.createChannel(function(err, ch) {
+Consumer.prototype.startWorker = function() {
+    var that = this;
+    this.amqpConn.createChannel(function(err, ch) {
         if (closeOnErr(err)) return;
         ch.on("error", function(err) {
             console.error("[AMQP] channel error", err.message);
@@ -46,7 +47,7 @@ Consumer.startWorker = function() {
         });
 
         function processMsg(msg) {
-            Consumer.work(msg, function(ok) {
+            that.work(msg, function(ok) {
                 try {
                     if (ok)
                         ch.ack(msg);
@@ -60,7 +61,7 @@ Consumer.startWorker = function() {
     });
 };
 
-Consumer.work = function(msg, cb) {
+Consumer.prototype.work = function(msg, cb) {
     console.log("Got msg ", msg.content.toString());
     cb(true);
 };

@@ -1,6 +1,8 @@
 var express = require('express');
-var ampq = require('libs/Publisher');
+var Publisher = require('libs/Publisher');
 
+var Consumer = require('libs/BaseConsumer');
+//var ampq_lib = require('libs/ampq_test');
 var router = express.Router();
 
 var Filters = require('models/filters/Filters');
@@ -15,7 +17,8 @@ router.get('/', function(req, res, next) {
         }
 
         var click = new Click(null, subscription);
-        ampq.publish('jobs', "work work work", function(){
+
+        Publisher.publish('jobs', "work work work", function(){
             res.render('index', { title: 'mmm'});
         });
 
