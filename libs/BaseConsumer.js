@@ -30,7 +30,7 @@ Consumer.prototype.start = function(){
 Consumer.prototype.startWorker = function() {
     var that = this;
     this.amqpConn.createChannel(function(err, ch) {
-        if (closeOnErr(err)) return;
+        if (that.closeOnErr(err)) return;
         ch.on("error", function(err) {
             console.error("[AMQP] channel error", err.message);
         });
@@ -41,7 +41,7 @@ Consumer.prototype.startWorker = function() {
 
         ch.prefetch(10);
         ch.assertQueue("jobs", { durable: true }, function(err, _ok) {
-            if (closeOnErr(err)) return;
+            if (that.closeOnErr(err)) return;
             ch.consume("jobs", processMsg, { noAck: false });
             console.log("Worker is started");
         });
@@ -54,11 +54,18 @@ Consumer.prototype.startWorker = function() {
                     else
                         ch.reject(msg, true);
                 } catch (e) {
-                    closeOnErr(e);
+                    that.closeOnErr(e);
                 }
             });
         }
     });
+};
+
+Consumer.prototype.closeOnErr = function(err) {
+    if (!err) return false;
+    console.error("[AMQP] error", err);
+    this.amqpConn.close();
+    return true;
 };
 
 Consumer.prototype.work = function(msg, cb) {
