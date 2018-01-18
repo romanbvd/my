@@ -13,7 +13,7 @@ Filters.validateSubscription = function(id, callbackGeneral) {
     async.waterfall([
         function (callback){
             Subscription.getSubscriptionById(id, function(err, subscription) {
-                callback(null, subscription)
+                callback(err, subscription)
             });
         },
         MpExistsFilter,

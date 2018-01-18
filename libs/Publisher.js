@@ -59,7 +59,8 @@ Publisher.prototype.closeOnErr = function(err) {
 Publisher.prototype.publish = function (routingKey, content, callback) {
     var that = this;
     var exchange = '';
-    var content = new Buffer(content);
+
+    var content = new Buffer(JSON.stringify(content));
     try {
         this.pubChannel.assertQueue(routingKey, { durable: true }, function(){
             that.pubChannel.publish(exchange, routingKey, content, { persistent: true },

@@ -1,10 +1,12 @@
 var amqp = require('amqplib/callback_api');
 
 function Consumer(){
+    this.queue_name = '';
     this.amqpConn = null;
 }
 
-Consumer.prototype.start = function(){
+Consumer.prototype.start = function(queue_name){
+    this.queue_name = queue_name;
     var that = this;
     amqp.connect("amqp://localhost?heartbeat=60", function(err, conn) {
         if (err) {
@@ -40,9 +42,9 @@ Consumer.prototype.startWorker = function() {
         });
 
         ch.prefetch(10);
-        ch.assertQueue("jobs", { durable: true }, function(err, _ok) {
+        ch.assertQueue(that.queue_name, { durable: true }, function(err, _ok) {
             if (that.closeOnErr(err)) return;
-            ch.consume("jobs", processMsg, { noAck: false });
+            ch.consume(that.queue_name, processMsg, { noAck: false });
             console.log("Worker is started");
         });
 

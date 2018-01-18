@@ -1,11 +1,14 @@
+var Publisher = require('libs/Publisher');
+
 function Click(user_info, subscription){
     this._user_info = user_info;
     this._subscription = subscription;
 }
 
-Click.prototype.saveClick = function(){
+Click.prototype.saveClick = function(callback){
     var clickInfo = this.getClickInfo();
-    console.log(clickInfo);
+
+    Publisher.publish('clicks', clickInfo, callback);
 };
 
 Click.prototype.getClickInfo = function(){

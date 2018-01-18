@@ -1,12 +1,15 @@
 var inherits = require('util').inherits;
-var Consumer = require('libs/BaseConsumer');
+var BaseConsumer = require('libs/BaseConsumer');
 
 function ClicksConsumer() {
-    Consumer.call();
+    BaseConsumer.call();
 }
-inherits(Channel, BaseChannel);
+inherits(ClicksConsumer, BaseConsumer);
 
 ClicksConsumer.prototype.work = function(msg, cb){
-    console.log("Clicks Consumer Got msg ", msg.content.toString());
+    var click = msg.content.toString();
+    console.log(JSON.parse(click));
     cb(true);
-}
+};
+
+module.exports = ClicksConsumer;

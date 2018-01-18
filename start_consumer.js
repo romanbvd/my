@@ -1,4 +1,4 @@
-var Consumer = require('libs/BaseConsumer');
+var Consumer = require('consumers/ClicksConsumer');
 
 var consumer = new Consumer();
-consumer.start();
+consumer.start('clicks');

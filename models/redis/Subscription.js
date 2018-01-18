@@ -73,8 +73,8 @@ Subscription.prototype.getPublisher = function(){
 
 Subscription.getSubscriptionById = function(id, callback){
     redis.hget('subscriptions_hash', id, function(err, reply) {
-        if(err) callback(err);
-
+        if(!reply || err) callback('Subscription "' + id + '" not found');
+console.log('fff');
         var subscription = new Subscription(JSON.parse(reply));
         subscription.init(function(){
             callback(null, subscription);

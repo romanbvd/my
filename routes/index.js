@@ -1,5 +1,4 @@
 var express = require('express');
-var Publisher = require('libs/Publisher');
 
 var Consumer = require('libs/BaseConsumer');
 //var ampq_lib = require('libs/ampq_test');
@@ -12,19 +11,16 @@ var Click = require('models/Click');
 router.get('/', function(req, res, next) {
 
     Filters.validateSubscription(req.query.guid, function(err, subscription){
-        if(!err){
-            //!!!!!!!!!!!!!!!!!!!!!!!!!
+        if(err){
+            console.log('s')
+            res.render('not_available_campaign', {'hide_branding': 0, 'code' : ''});
+            return;
         }
-
+console.log('zzz');
         var click = new Click(null, subscription);
-
-        Publisher.publish('jobs', "work work work", function(){
+        click.saveClick(function(){
             res.render('index', { title: 'mmm'});
         });
-
-        //click.saveClick();
-        //console.log(click.getClickInfo());
-        console.log('send');
     });
 
 });
