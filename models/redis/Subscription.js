@@ -1,10 +1,18 @@
 var async = require('async');
 
 var redis = require('libs/redis');
+var util = require('util');
 
 var Campaign = require('models/redis/Campaign');
 var MediaProperty = require('models/redis/MediaProperty');
 var Publisher = require('models/redis/Publisher');
+
+function SubscriptionException(code, message){
+    this.message = message;
+    this.code = code;
+}
+
+util.inherits(SubscriptionException, Error);
 
 function Subscription(data){
     this._data = (typeof data == 'object') ? data : {};
@@ -73,8 +81,11 @@ Subscription.prototype.getPublisher = function(){
 
 Subscription.getSubscriptionById = function(id, callback){
     redis.hget('subscriptions_hash', id, function(err, reply) {
-        if(!reply || err) callback('Subscription "' + id + '" not found');
-console.log('fff');
+        if(!reply || err) {
+            callback(new SubscriptionException(403, 'Subscription "' + id + '" not found'));
+            return;
+        }
+
         var subscription = new Subscription(JSON.parse(reply));
         subscription.init(function(){
             callback(null, subscription);
