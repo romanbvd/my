@@ -1,4 +1,5 @@
-var GeoLocation = require('libs/redis/GeoLocation');
+var async = require('async');
+var GeoLocation = require('models/redis/GeoLocation');
 
 function User(){
     this._ip = '';
@@ -8,25 +9,22 @@ function User(){
     this._params = '';
 }
 
-User.prototype.init = function(req){
+User.prototype.init = function(req, callbackResult){
     that = this;
     this._ip = req.connection.remoteAddress;
+    this._ip = '176.36.10.243';
+    //this._ip = '127.0.0.1';
     this._params = '';
+
     async.parallel({
         isp: function(callback) {
-            GeoLocation.getProviderByIp(that._ip, function (err, campaign) {
-                callback(err, campaign);
-            });
+            GeoLocation.getProviderByIp(that._ip, callback);
         },
         country: function(callback) {
-            GeoLocation.getCountryByIp(that._ip, function (err, mediaProperty) {
-                callback(err, mediaProperty);
-            });
+            GeoLocation.getCountryByIp(that._ip, callback);
         },
         city: function(callback) {
-            GeoLocation.getCityByIp(that._ip, function (err, publisher) {
-                callback(err, publisher);
-            });
+            GeoLocation.getCityByIp(that._ip, callback);
         }
     }, function(err, results) {
         if(err) throw err;
@@ -36,6 +34,13 @@ User.prototype.init = function(req){
         that._city = results.city;
 
         callbackResult();
+    });
+};
+
+User.getUserByRequest = function(req, callback){
+    var user = new User();
+    user.init(req, function(){
+        callback(null, user);
     });
 };
 

@@ -8,7 +8,7 @@ var MpActiveFilter = require('models/filters/MpActiveFilter');
 function Filters(){
 }
 
-Filters.validateSubscription = function(clientModel, subscriptionModel, callbackGeneral) {
+Filters.validate = function(clientModel, subscriptionModel, callbackGeneral) {
     async.waterfall([
         function (callback){
             callback(clientModel, subscriptionModel)
