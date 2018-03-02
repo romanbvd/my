@@ -11,22 +11,23 @@ var Click = require('models/Click');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    async.parallel([
-            function (callback){
+    async.parallel({
+            user: function (callback) {
                 User.getUserByRequest(req, callback);
             },
-            function (callback){
+            subscription: function (callback) {
                 Subscription.getSubscriptionById(req.query.guid, callback);
             }
-        ],
+        },
         function(err, results){
-            Filters.validate(req.query.guid, function(err, subscription){
+            if(err) throw err;
+
+            Filters.validate(results.user, results.subscription, function(err, subscription){
                 if(err) return next(err);
-                console.log(res.connection);
-                var click = new Click(null, subscription);
-                click.saveClick(function(){
+                //var click = new Click(null, subscription);
+                //click.saveClick(function(){
                     res.render('index', { title: 'mmm'});
-                });
+                //});
             });
         });
 });

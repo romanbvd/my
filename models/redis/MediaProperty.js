@@ -6,6 +6,12 @@ function MediaProperty(data){
     this._data = (typeof data == 'object') ? data : {};
 }
 
+MediaProperty.STATUS_PENDING = '0';
+MediaProperty.STATUS_REVIEWING = '1';
+MediaProperty.STATUS_APPROVED = '2';
+MediaProperty.STATUS_REJECTED = '3';
+MediaProperty.STATUS_REMOVED = '4';
+
 MediaProperty.prototype.getName = function(){
     return this._data.name || '';
 };

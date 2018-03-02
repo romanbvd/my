@@ -16,6 +16,7 @@ function GeoLocation(){
 GeoLocation.CITY_KEY = 'ip_cities';
 GeoLocation.COUNTRY_KEY = 'ip_countries';
 GeoLocation.ISP_KEY = 'ip_isp';
+GeoLocation.ISP_BLACKLISTED = 'isp_black';
 
 GeoLocation.getCountryByIp = function(ip, callback){
     this.getZrangeValue(GeoLocation.COUNTRY_KEY, ip, callback);
@@ -27,6 +28,10 @@ GeoLocation.getCityByIp = function(ip, callback){
 
 GeoLocation.getProviderByIp = function(ip, callback){
     this.getZrangeValue(GeoLocation.ISP_KEY, ip, callback);
+};
+
+GeoLocation.getBlaclistedIsp = function(callback){
+    redis.lrange(GeoLocation.ISP_KEY, 0, -1, callback);
 };
 
 GeoLocation.getZrangeValue = function(key, ip, callback){
