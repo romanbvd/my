@@ -7,7 +7,7 @@ var ERR_CODE = 110;
 function MpActiveFilter(user, subscription, callback){
     var advertiserId = subscription.getCampaign().getAdvertiserId();
 
-    if(subscription.getMediaProperty().status != MediaProperty.STATUS_APPROVED){
+    if(subscription.getMediaProperty().getStatus() != MediaProperty.STATUS_APPROVED){
             return callback(new FilterException(ERR_CODE, ERR_MESSAGE), null);
     }
 

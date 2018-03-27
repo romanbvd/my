@@ -23,11 +23,17 @@ router.get('/', function(req, res, next) {
             if(err) throw err;
 
             Filters.validate(results.user, results.subscription, function(err, subscription){
-                if(err) return next(err);
-                //var click = new Click(null, subscription);
-                //click.saveClick(function(){
-                    res.render('index', { title: 'mmm'});
-                //});
+                var click = new Click(results.user, results.subscription);
+
+                if(err) {
+                    click.saveStopClick(function(){
+                        return next(err);
+                    });
+                }else {
+                    click.saveClick(function () {
+                        res.render('index', {title: 'mmm'});
+                    });
+                }
             });
         });
 });

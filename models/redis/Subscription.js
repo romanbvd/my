@@ -17,6 +17,7 @@ util.inherits(SubscriptionException, Error);
 function Subscription(data){
     this._data = (typeof data == 'object') ? data : {};
 
+    this._subscription_id = '';
     this._campaign = null;
     this._media_property = null;
     this._publisher = null;
@@ -52,7 +53,7 @@ Subscription.prototype.init = function (callbackResult) {
 };
 
 Subscription.prototype.getSubscriptionId = function(){
-    return this._data.campaign_id || '';
+    return this._subscription_id || '';
 };
 
 Subscription.prototype.getCampaignId = function(){
@@ -87,6 +88,7 @@ Subscription.getSubscriptionById = function(id, callback){
         }
 
         var subscription = new Subscription(JSON.parse(reply));
+        subscription._id = id;
         subscription.init(function(){
             callback(null, subscription);
         });

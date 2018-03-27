@@ -20,6 +20,10 @@ MediaProperty.prototype.getMediaPropertyId = function(){
     return this._data._id || '';
 };
 
+MediaProperty.prototype.getStatus = function(){
+    return this._data.status || '';
+}
+
 MediaProperty.prototype.isBlockedForAdvertiser = function(advertiserId, callback){
     var mpId = this.getMediaPropertyId();
     if(!helper.MongoDb.isValid(mpId)){

@@ -31,7 +31,7 @@ GeoLocation.getProviderByIp = function(ip, callback){
 };
 
 GeoLocation.getBlaclistedIsp = function(callback){
-    redis.lrange(GeoLocation.ISP_KEY, 0, -1, callback);
+    redis.lrange(GeoLocation.ISP_BLACKLISTED, 0, -1, callback);
 };
 
 GeoLocation.getZrangeValue = function(key, ip, callback){

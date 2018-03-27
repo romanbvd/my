@@ -9,7 +9,7 @@ inherits(ClicksConsumer, BaseConsumer);
 ClicksConsumer.prototype.work = function(msg, cb){
     var click = msg.content.toString();
     console.log(JSON.parse(click));
-    cb(true);
+ //   cb(true);
 };
 
 module.exports = ClicksConsumer;

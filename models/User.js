@@ -37,6 +37,22 @@ User.prototype.init = function(req, callbackResult){
     });
 };
 
+User.prototype.getIp = function(){
+    return this._ip;
+};
+
+User.prototype.getIsp = function(){
+    return this._isp;
+};
+
+User.prototype.getCountry = function(){
+    return this._country;
+};
+
+User.prototype.getCity = function(){
+    return this._city;
+};
+
 User.getUserByRequest = function(req, callback){
     var user = new User();
     user.init(req, function(){

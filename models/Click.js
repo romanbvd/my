@@ -1,9 +1,13 @@
 var Publisher = require('libs/Publisher');
+var GuidGenerator = require('libs/helpers/GuidGenerator');
 
 function Click(user_info, subscription){
+    console.log(user_info);
     this._user_info = user_info;
     this._subscription = subscription;
 }
+
+Click.TYPE_FIRST_CLICK = 1;
 
 Click.prototype.saveClick = function(callback){
     var clickInfo = this.getClickInfo();
@@ -11,14 +15,19 @@ Click.prototype.saveClick = function(callback){
     Publisher.publish('clicks', clickInfo, callback);
 };
 
+Click.prototype.saveStopClick = function(callback){
+    var clickInfo = this.getStopClickInfo();
+    Publisher.publish('stop_clicks', clickInfo, callback);
+};
+
 Click.prototype.getClickInfo = function(){
     return {
-        'country_short': '',// $this->user_info->country_short,
-        'city': '',// $this->user_info->city,
-        'ip': '',// $this->user_info->ip,
+        'country_short': this._user_info.getCountry(),
+        'city': this._user_info.getCity(),
+        'ip': this._user_info.getIp(),
         'subscription_id': this._subscription.getSubscriptionId(),
-        'type': '',// $this->type,
-        'click_id': '',// $this->click_id,
+        'type': Click.TYPE_FIRST_CLICK,
+        'click_id': GuidGenerator.guid(),
         'campaign_id': this._subscription.getCampaignId(),
         'publisher_id': this._subscription.getPublisherId(),
         'first_click_time': '',// time(),
