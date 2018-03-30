@@ -1,4 +1,6 @@
 var async = require('async');
+
+var MobileDetect = require('mobile-detect');
 var GeoLocation = require('models/redis/GeoLocation');
 
 function User(){
@@ -6,15 +8,23 @@ function User(){
     this._isp = '';
     this._country = '';
     this._city = '';
-    this._params = '';
+    this._query_params = '';
+    this.user_agent = '';
+
+    this._mobile_detective = null;
 }
 
 User.prototype.init = function(req, callbackResult){
     that = this;
+
+    this._query_params = req.query;
+    this._user_agent = req.header('User-agent');
+
+    this._mobile_detective = new MobileDetect(this._user_agent);
+    this._mobile_detective.os();
     this._ip = req.connection.remoteAddress;
     this._ip = '176.36.10.243';
     //this._ip = '127.0.0.1';
-    this._params = '';
 
     async.parallel({
         isp: function(callback) {
@@ -51,6 +61,56 @@ User.prototype.getCountry = function(){
 
 User.prototype.getCity = function(){
     return this._city;
+};
+
+User.prototype.getQueryParam = function(param){
+    return this._query_params[param] || '';
+};
+
+//device properties
+User.prototype.getUserAgent = function(){
+    return this._user_agent || '';
+};
+
+User.prototype.getPlatform = function(){
+    var mobile = this._mobile_detective.mobile();
+    var os = this._mobile_detective.os();
+
+    if(!mobile){
+        return 'desktop';
+    }
+
+    if(mobile == 'iPhone'){
+        if(mobile.indexOf('iPod') == -1){
+            return 'iPod';
+        }
+        return 'iPhone';
+    }
+
+    if(mobile == 'iPad'){
+        return 'iPad';
+    }
+
+    if(os == 'AndroidOS'){
+        return 'Android';
+    }
+
+    if(os == 'WindowsPhoneOS'){
+        return 'wp';
+    }
+
+    return '';
+};
+
+User.prototype.getOsVersion = function(){
+    console.log(this._mobile_detective.mobileGrade());
+    console.log( this._mobile_detective.version('AndroidOS') );         // 534.3
+    console.log( this._mobile_detective.versionStr('Build') );
+};
+
+User.prototype.getDeviceType = function(){
+    console.log(this._mobile_detective.os());
+    return this._mobile_detective.os() || '';
 };
 
 User.getUserByRequest = function(req, callback){
