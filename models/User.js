@@ -81,7 +81,7 @@ User.prototype.getPlatform = function(){
     }
 
     if(mobile == 'iPhone'){
-        if(mobile.indexOf('iPod') == -1){
+        if(mobile.indexOf('iPod') != -1){
             return 'iPod';
         }
         return 'iPhone';
@@ -103,9 +103,7 @@ User.prototype.getPlatform = function(){
 };
 
 User.prototype.getOsVersion = function(){
-    console.log(this._mobile_detective.mobileGrade());
-    console.log( this._mobile_detective.version('AndroidOS') );         // 534.3
-    console.log( this._mobile_detective.versionStr('Build') );
+    return this._mobile_detective.version(this.getPlatform());
 };
 
 User.prototype.getDeviceType = function(){
