@@ -107,8 +107,21 @@ User.prototype.getOsVersion = function(){
 };
 
 User.prototype.getDeviceType = function(){
-    console.log(this._mobile_detective.os());
-    return this._mobile_detective.os() || '';
+    return this._mobile_detective.mobile() || '';
+};
+
+User.prototype.getPublisherParams = function(){
+    var that = this;
+    var keys = ['subid1', 'subid2', 'subid3', 'subid4', 'subid5', 'clickid', 'mpid'];
+
+    var params = [];
+    keys.forEach(function(item, i, arr){
+        if(that.getQueryParam(item)) {
+            params[item] = that.getQueryParam(item);
+        }
+    });
+
+    return params;
 };
 
 User.getUserByRequest = function(req, callback){

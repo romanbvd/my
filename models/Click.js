@@ -4,13 +4,16 @@ var GuidGenerator = require('libs/helpers/GuidGenerator');
 function Click(user_info, subscription){
     this._user_info = user_info;
     this._subscription = subscription;
+
+    this._cache_payout = null;
 }
 
 Click.TYPE_FIRST_CLICK = 1;
 
 Click.prototype.saveClick = function(callback){
     var clickInfo = this.getClickInfo();
-//console.log(clickInfo);return callback();
+    console.log(clickInfo);
+    return callback();
     Publisher.publish('clicks', clickInfo, callback);
 };
 
@@ -31,15 +34,15 @@ Click.prototype.getClickInfo = function(){
         'publisher_id': this._subscription.getPublisherId(),
         'first_click_time': Number.parseInt((new Date()).getTime() / 1000),
         'platform': this._user_info.getPlatform(),
-        'device_type': '',// $this->user_info->getDeviceType(),
+        'device_type': this._user_info.getDeviceType(),
         'user_agent': this._user_info.getUserAgent(),
         'os_version': this._user_info.getOsVersion(),
         'redirect_url': '',// $this->redirect(),
-        'publisher_parameters': '',// $this->user_info->getSubIds(),
-        'click_rate': '',// $this->getRate(),
-        'revshare': '',// $this->getRevshare(),
-        'net': '',// $this->getNetWithFactor(),
-        'publisher_net': '',// $this->getRateWithPayoutFactor(),
+        'publisher_parameters': this._user_info.getPublisherParams(),
+        'click_rate': this.getRate(),
+        'revshare': this.getRevshare(),
+        'net': this.getNetWithFactor(),
+        'publisher_net': this.getRateWithPayoutFactor(),
         'isp': this._user_info.getIsp(),
         'idfa': this._user_info.getQueryParam('idfa'),
         'gaid': this._user_info.getQueryParam('gaid'),
@@ -56,6 +59,41 @@ Click.prototype.getClickInfo = function(){
         'is_smart': '',// $this->is_smart,
         'redirect_type': ''// $this->redirect_type
     };
+};
+
+Click.prototype.getRate = function(){
+    var payout = this.getPayoutByLocation();
+    return parseFloat(payout.usd_payout) || 0;
+};
+
+Click.prototype.getRevshare = function(){
+    var payout = this.getPayoutByLocation();
+    return parseFloat(payout.revshare) || 0;
+};
+
+Click.prototype.getNet = function(){
+
+};
+
+Click.prototype.getRateWithPayoutFactor = function(){
+
+};
+
+Click.prototype.getNetWithFactor = function(){
+
+};
+
+Click.prototype.getPayoutByLocation = function(){
+    if(this._cache_payout != null){
+        return this._cache_payout;
+    }
+
+    this._cache_payout = this._subscription.getPayoutInformation(this._user_info.getPlatform(), this._user_info.getCountry(), this._user_info.getCity());
+    return this._cache_payout;
+};
+
+Click.prototype.getRedirect = function(){
+
 };
 
 module.exports = Click;

@@ -12,6 +12,10 @@ Campaign.prototype.getAdvertiserId = function(){
     return this._data.advertiser || '';
 };
 
+Campaign.prototype.getPayout = function(){
+    return this._data.payouts || [];
+};
+
 Campaign.getCampaignById = function(id, callback){
     redis.get(id + "_campaign", function(err, reply) {
         if(err) callback(err);

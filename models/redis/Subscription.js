@@ -80,6 +80,32 @@ Subscription.prototype.getPublisher = function(){
     return this._publisher;
 };
 
+Subscription.prototype.getPayoutInformation = function(platform, country, city){
+    var payouts = this.getCampaign().getPayout();
+
+    for(var i = 0; i < payouts.length; i++){
+        if(payouts[i].platforms != platform.toLowerCase()){
+            continue;
+        }
+
+        if(payouts[i].countries.indexOf(country) == -1){
+            continue;
+        }
+
+        if(!city){
+            return payouts[i];
+        }
+
+        if(payouts[i].countries.indexOf(country) == -1){
+            continue;
+        }
+
+        return payouts[i];
+    }
+
+    return [];
+};
+
 Subscription.getSubscriptionById = function(id, callback){
     redis.hget('subscriptions_hash', id, function(err, reply) {
         if(!reply || err) {
