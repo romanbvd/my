@@ -63,8 +63,9 @@ User.prototype.getCity = function(){
     return this._city;
 };
 
-User.prototype.getQueryParam = function(param){
-    return this._query_params[param] || '';
+User.prototype.getQueryParam = function(param, def){
+    def = def || '';
+    return this._query_params[param] || def;
 };
 
 //device properties
