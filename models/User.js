@@ -68,6 +68,10 @@ User.prototype.getQueryParam = function(param, def){
     return this._query_params[param] || def;
 };
 
+User.prototype.getQueryString = function(){
+    return this._query_params
+};
+
 //device properties
 User.prototype.getUserAgent = function(){
     return this._user_agent || '';
@@ -123,6 +127,10 @@ User.prototype.getPublisherParams = function(){
     });
 
     return params;
+};
+
+User.prototype.getReferrer = function(){
+
 };
 
 User.getUserByRequest = function(req, callback){
