@@ -85,11 +85,11 @@ Click.prototype.getStopClickInfo = function(reason, code){
         'redirect_url': '',// '',
         'user_agent': this._user_model.getUserAgent(),
         'created_at': Number.parseInt((new Date()).getTime() / 1000),
-        'query_params': this.getQueryString(),
+        'query_params': this._user_model.getQueryString(),
         'subid1': this._user_model.getQueryParam('subid1', ''),
         'subid2': this._user_model.getQueryParam('subid2', ''),
         'publisher_parameters': this._user_model.getPublisherParams(),
-        'referrer': this.getReferrer(),
+        'referrer': this._user_model.getReferrer(),
         'redirected_to_smartlink': ''// $redirected_to_smartlink
     };
 };

@@ -12,6 +12,8 @@ MediaProperty.STATUS_APPROVED = '2';
 MediaProperty.STATUS_REJECTED = '3';
 MediaProperty.STATUS_REMOVED = '4';
 
+MediaProperty.REDIS_KEY = "_media_property";
+
 MediaProperty.prototype.getName = function(){
     return this._data.name || '';
 };
@@ -22,7 +24,21 @@ MediaProperty.prototype.getMediaPropertyId = function(){
 
 MediaProperty.prototype.getStatus = function(){
     return this._data.status || '';
-}
+};
+
+MediaProperty.prototype.isIncent = function(){
+    return this._data.is_incent;
+};
+
+MediaProperty.prototype.markAsIncent = function(){
+    this._data.is_incent = true;
+};
+
+MediaProperty.prototype.save = function(callback){
+    console.log(this._data);return;
+    callback = callback || function(){};
+    redis.set(this.getMediaPropertyId() + MediaProperty.REDIS_KEY, JSON.stringify(this._data), callback);
+};
 
 MediaProperty.prototype.isBlockedForAdvertiser = function(advertiserId, callback){
     var mpId = this.getMediaPropertyId();
@@ -43,7 +59,7 @@ MediaProperty.prototype.isBlockedForAdvertiser = function(advertiserId, callback
 };
 
 MediaProperty.getMediaPropertyById = function(id, callback){
-    redis.get(id + "_media_property", function(err, reply) {
+    redis.get(id + MediaProperty.REDIS_KEY, function(err, reply) {
         if(err) callback(err);
 
         callback(null, new MediaProperty(JSON.parse(reply)));

@@ -69,7 +69,7 @@ User.prototype.getQueryParam = function(param, def){
 };
 
 User.prototype.getQueryString = function(){
-    return this._query_params
+    return this._query_params;
 };
 
 //device properties

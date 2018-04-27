@@ -16,6 +16,10 @@ Campaign.prototype.getPayout = function(){
     return this._data.payouts || [];
 };
 
+Campaign.prototype.isIncent = function(){
+    return this._data.incent == '1';
+};
+
 Campaign.getCampaignById = function(id, callback){
     redis.get(id + "_campaign", function(err, reply) {
         if(err) callback(err);
