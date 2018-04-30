@@ -38,12 +38,16 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
+    res.render('not_available_campaign', {'hide_branding': 0, 'code' : err.code});
+});
+
+// error handler
+app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   var error = req.app.get('env') === 'development' ? err : {};
 //console.log(err);
   // render the error page
   res.status(err.status || 500);
-  console.log(err.stack);
   res.render('error', {
       message: err.message,
       error: err
