@@ -20,7 +20,7 @@ router.get('/', function(req, res, next) {
             }
         },
         function(err, results){
-            if(err) throw err;
+            if(err) return next(err);
 
             Filters.validate(results.user, results.subscription, function(err, subscription){
                 var click = new Click(results.user, results.subscription);

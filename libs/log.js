@@ -10,7 +10,8 @@ function getLogger(module){
                 colorized : true,
                 level: ENV == 'development' ? 'debug' : 'error',
                 label: path
-            })
+            }),
+            new winston.transports.File({filename:'debug.log', label: path, level:'error'})
         ]
     });
 }

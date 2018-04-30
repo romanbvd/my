@@ -3,6 +3,8 @@ var async = require('async');
 var redis = require('libs/redis');
 var util = require('util');
 
+var log = require('libs/log')(module);
+
 var Campaign = require('models/redis/Campaign');
 var MediaProperty = require('models/redis/MediaProperty');
 var Publisher = require('models/redis/Publisher');
@@ -42,7 +44,7 @@ Subscription.prototype.init = function (callbackResult) {
             });
         }
     }, function(err, results) {
-        if(err) throw err;
+        if(err) return callbackResult(err);
 
         that._campaign = results.campaign;
         that._media_property = results.media_property;
@@ -109,13 +111,14 @@ Subscription.prototype.getPayoutInformation = function(platform, country, city){
 Subscription.getSubscriptionById = function(id, callback){
     redis.hget('subscriptions_hash', id, function(err, reply) {
         if(!reply || err) {
-            callback(new SubscriptionException(403, 'Subscription "' + id + '" not found'));
-            return;
+            var msg = 'Subscription "' + id + '" not found in cache';
+            log.error(msg);
+            return callback(new SubscriptionException(403, msg));
         }
 
         var subscription = new Subscription(JSON.parse(reply));
-        subscription._id = id;
-        subscription.init(function(){
+        subscription._subscription_id = id;
+        subscription.init(function(err){
             callback(null, subscription);
         });
     });

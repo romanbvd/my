@@ -1,4 +1,5 @@
 var redis = require('libs/redis');
+var log = require('libs/log')(module);
 
 function Campaign(data){
     this._data = (typeof data == 'object') ? data : {};
@@ -22,7 +23,10 @@ Campaign.prototype.isIncent = function(){
 
 Campaign.getCampaignById = function(id, callback){
     redis.get(id + "_campaign", function(err, reply) {
-        if(err) callback(err);
+        if(!reply || err) {
+            log.error('Campaign "' + id + '" not found in cache');
+            return callback(err);
+        }
         callback(null, new Campaign(JSON.parse(reply)));
     });
 };

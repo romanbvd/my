@@ -37,7 +37,7 @@ User.prototype.init = function(req, callbackResult){
             GeoLocation.getCityByIp(that._ip, callback);
         }
     }, function(err, results) {
-        if(err) throw err;
+        if(err) return callbackResult(err);
 
         that._isp = results.isp;
         that._country = results.country;

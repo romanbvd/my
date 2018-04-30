@@ -35,7 +35,6 @@ MediaProperty.prototype.markAsIncent = function(){
 };
 
 MediaProperty.prototype.save = function(callback){
-    console.log(this._data);return;
     callback = callback || function(){};
     redis.set(this.getMediaPropertyId() + MediaProperty.REDIS_KEY, JSON.stringify(this._data), callback);
 };
@@ -60,7 +59,10 @@ MediaProperty.prototype.isBlockedForAdvertiser = function(advertiserId, callback
 
 MediaProperty.getMediaPropertyById = function(id, callback){
     redis.get(id + MediaProperty.REDIS_KEY, function(err, reply) {
-        if(err) callback(err);
+        if(!reply || err) {
+            log.error('Media Property "' + id + '" not found in cache');
+            return callback(err);
+        }
 
         callback(null, new MediaProperty(JSON.parse(reply)));
     });
