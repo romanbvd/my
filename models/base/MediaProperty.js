@@ -34,7 +34,7 @@ schema.statics.markAsIncent = function(mp_id, callback){
         }
 
         RedisMediaProperty.getMediaPropertyById(mp_id, function(err, mediaProperty){
-            mediaPropertymarkAsIncent();
+            mediaProperty.markAsIncent();
             mediaProperty.save(callback);
         });
     })

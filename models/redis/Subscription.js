@@ -29,19 +29,13 @@ Subscription.prototype.init = function (callbackResult) {
     var that = this;
     async.parallel({
         media_property: function(callback) {
-            MediaProperty.getMediaPropertyById(that.getMediaPropertyId(), function (err, mediaProperty) {
-                callback(err, mediaProperty);
-            });
+            MediaProperty.getMediaPropertyById(that.getMediaPropertyId(), callback);
         },
         campaign: function(callback) {
-            Campaign.getCampaignById(that.getCampaignId(), function (err, campaign) {
-                callback(err, campaign);
-            });
+            Campaign.getCampaignById(that.getCampaignId(), callback);
         },
         publisher: function(callback) {
-            Publisher.getPublisherById(that.getPublisherId(), function (err, publisher) {
-                callback(err, publisher);
-            });
+            Publisher.getPublisherById(that.getPublisherId(), callback);
         }
     }, function(err, results) {
         if(err) return callbackResult(err);

@@ -1,5 +1,8 @@
 var inherits = require('util').inherits;
 var async = require('async');
+
+var log = require('libs/log')(module);
+
 var BaseConsumer = require('libs/BaseConsumer');
 
 var Click = require('models/Click');
@@ -20,9 +23,9 @@ ClicksConsumer.prototype.work = function(msg, cb){
     var clickInfo = JSON.parse(message);
 
     if(clickInfo.type !== Click.TYPE_FIRST_CLICK){
-        console.log('Wrong message type. Removing...');
+        log.debug('Wrong message type. Removing...');
         cb(true);
-        console.log('Done');
+        log.debug('Done');
         return;
     }
 
@@ -35,7 +38,7 @@ ClicksConsumer.prototype.work = function(msg, cb){
         markMpAsIncent
     ], function(err, clickInfo){
         if(err && err !== true){
-            console.log(err);
+            log.error(err.message);
         }
     });
 
