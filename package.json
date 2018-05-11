@@ -3,21 +3,30 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "test": "npm run test-unit",
+    "test-unit": "NODE_ENV=test mocha '**/*.spec.js'"
   },
   "dependencies": {
+    "amqplib": "*",
     "body-parser": "~1.18.2",
+    "chai": "^4.1.2",
+    "co-mocha": "^1.2.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
-    "express": "~4.15.5",
     "ejs": "*",
-    "ejs-locals" : "*",
-    "morgan": "~1.9.0",
-    "serve-favicon": "~2.4.5",
-    "redis" : "*",
-    "nconf" : "*",
+    "ejs-locals": "*",
+    "express": "~4.15.5",
+    "mobile-detect": "^1.4.1",
+    "mocha": "^5.1.1",
     "mongoose": "*",
-    "winston": "*",
-    "amqplib" : "*"
+    "morgan": "~1.9.0",
+    "nconf": "*",
+    "os": "^0.1.1",
+    "redis": "*",
+    "serve-favicon": "~2.4.5",
+    "sinon": "^5.0.7",
+    "sinon-chai": "^3.0.0",
+    "winston": "*"
   }
 }
