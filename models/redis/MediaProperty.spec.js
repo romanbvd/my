@@ -28,6 +28,6 @@ describe('Test Media Propert Redis module', function () {
 
     it('Test markAsIncent() function', function () {
         assert.equal(mediaProperty.getMediaPropertyId(), '5756cb35dd1213b40e8b457b');
-        isIncent(){}
+        //isIncent(){}
     });
 });

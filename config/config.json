@@ -1,7 +1,7 @@
 {
     "port" : 3000,
     "mongoose" : {
-        "uri" : "mongodb://localhost/dev_0",
+        "uri" : "mongodb://localhost:27100/dev_0",
         "options" : {
             "useMongoClient": true,
             "server" : {

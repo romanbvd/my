@@ -1,0 +1,48 @@
+nginx:
+  image: bitnami/nginx
+  container_name: nginx
+  volumes:
+    - ./../../application:/app
+    - ./nginx/vhosts:/bitnami/nginx/conf/vhosts
+    - ./nginx/logs:/bitnami/nginx/logs
+    - ./nginx/conf:/bitnami/nginx/conf
+  ports:
+    - 80:80
+  environment:
+    - BITNAMI_APP_USER=www-data
+  links:
+    - php-fpm:php-fpm
+
+php-fpm:
+  build: ./php-fpm
+  container_name: php-fpm
+  ports:
+    - 9000:9000
+  volumes:
+    - ./../../application:/var/www/html
+    - ./../../application:/app
+  links:
+    - postgres:postgres
+    - gearman:gearman
+    - memcache:memcache
+
+postgres:
+  image: postgres:9.4
+  container_name: postgres
+  ports:
+    - 5432:5432
+  environment:
+    - POSTGRES_PASSWORD=postgres
+    - POSTGRES_USER=postgres
+
+gearman:
+  image: kendu/gearman
+  container_name: gearman
+  ports:
+    - 4730:4730
+
+memcache:
+  image: memcached:latest
+  container_name: memcached
+  ports:
+   - 11211:11211

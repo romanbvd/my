@@ -1,0 +1,27 @@
+{
+  "port" : 3000,
+  "mongoose" : {
+    "uri" : "mongodb://localhost:27100/dev_0",
+    "options" : {
+      "useMongoClient": true,
+      "server" : {
+        "socketOptions" : {
+          "keepAlive" : 1
+        }
+      }
+    }
+  },
+  "rabbitmq" : {
+    "protocol": "amqp",
+    "host" : "localhost",
+    "port" : 5672,
+    "login" : "guest",
+    "password" : "guest",
+    "vhost" : "/",
+    "heartbeat": 60
+  },
+  "redis" : {
+    "port" : 6380,
+    "password" : "persona"
+  }
+}
