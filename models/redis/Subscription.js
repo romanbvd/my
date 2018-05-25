@@ -103,13 +103,18 @@ Subscription.prototype.getPayoutInformation = function(platform, country, city){
 };
 
 Subscription.getSubscriptionById = function(id, callback){
+    if(!id){
+        var msg = 'Subscription ID not defined';
+        log.error(msg);
+        return callback(new SubscriptionException(403, msg));
+    }
+
     redis.hget('subscriptions_hash', id, function(err, reply) {
         if(!reply || err) {
             var msg = 'Subscription "' + id + '" not found in cache';
             log.error(msg);
             return callback(new SubscriptionException(403, msg));
         }
-
         var subscription = new Subscription(JSON.parse(reply));
         subscription._subscription_id = id;
         subscription.init(function(err){
