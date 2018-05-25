@@ -39,7 +39,7 @@ Subscription.prototype.init = function (callbackResult) {
         }
     }, function(err, results) {
         if(err) return callbackResult(err);
-
+console.log(results.media_property);
         that._campaign = results.campaign;
         that._media_property = results.media_property;
         that._publisher = results.publisher;
