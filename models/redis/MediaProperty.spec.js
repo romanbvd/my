@@ -2,14 +2,20 @@
 const sinon = require('sinon');
 const assert = require('chai').assert;
 
-var MediaProperty = require('./MediaProperty');
-var mediaPropertyJson = require('./MediaPropertyData');
-var mediaProperty = null;
+const redis = require('libs/redis');
+const MediaProperty = require('./MediaProperty');
+const mediaPropertyJson = require('./MediaPropertyData');
+let mediaProperty = null;
 
 describe('Test Media Propert Redis module', function () {
 
     before(function () {
-        mediaProperty = new MediaProperty(mediaPropertyJson);
+        sinon.stub(redis, 'get').withArgs('test_' + MediaProperty.REDIS_KEY).callsArgWith(1, null, mediaPropertyJson);
+
+
+        redis.get('test_' + MediaProperty.REDIS_KEY, function(a, b){
+            console.log(a);console.log(b);
+        });
     });
 
     after(function () {
