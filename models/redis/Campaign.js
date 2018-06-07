@@ -21,9 +21,9 @@ class Campaign{
     isIncent(){
         return this._data.incent == '1';
     }
-    
+
     static getCampaignById(id, callback){
-        redis.get(id + "_campaign", function(err, reply) {
+        Campaign.REDIS.get(id + "_campaign", function(err, reply) {
             if(!reply || err) {
                 log.error('Campaign "' + id + '" not found in cache');
                 return callback(err);
@@ -32,5 +32,7 @@ class Campaign{
         });
     }
 }
+
+Campaign.REDIS = redis;
 
 module.exports = Campaign;
