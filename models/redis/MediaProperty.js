@@ -37,7 +37,7 @@ class MediaProperty {
 
     save(callback){
         callback = callback || function(){};
-        redis.set(this.getMediaPropertyId() + MediaProperty.REDIS_KEY, JSON.stringify(this._data), callback);
+        MediaProperty.REDIS.set(this.getMediaPropertyId() + MediaProperty.REDIS_KEY, JSON.stringify(this._data), callback);
     };
 
     isBlockedForAdvertiser(advertiserId, callback){
@@ -50,7 +50,7 @@ class MediaProperty {
             log.error(helper.MongoDb.INVALID_OBJECT_ID + ' for "advertiserId"');
         }
 
-        redis.get(this.getMediaPropertyId() + '_' + advertiserId + '_blocked_mp', function(err, reply) {
+        MediaProperty.REDIS.get(this.getMediaPropertyId() + '_' + advertiserId + '_blocked_mp', function(err, reply) {
             if(err) callback(err);
 
             var result = (reply == null) ? false : true;
@@ -59,7 +59,7 @@ class MediaProperty {
     };
 
     static getMediaPropertyById(id, callback){
-        redis.get(id + MediaProperty.REDIS_KEY, function(err, reply) {
+        MediaProperty.REDIS.get(id + MediaProperty.REDIS_KEY, function(err, reply) {
             if(!reply || err) {
                 log.error('Media Property "' + id + '" not found in cache');
                 return callback(err);
@@ -69,5 +69,7 @@ class MediaProperty {
         });
     };
 }
+
+MediaProperty.REDIS = redis;
 
 module.exports = MediaProperty;
