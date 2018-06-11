@@ -23,12 +23,15 @@ class Campaign{
     }
 
     static getCampaignById(id, callback){
-        Campaign.REDIS.get(id + "_campaign", function(err, reply) {
-            if(!reply || err) {
-                log.error('Campaign "' + id + '" not found in cache');
-                return callback(err);
-            }
-            callback(null, new Campaign(JSON.parse(reply)));
+        return new Promise((resolve, reject) => {
+            Campaign.REDIS.get(id + "_campaign", function (err, reply) {
+                if (!reply || err) {
+                    log.error('Campaign "' + id + '" not found in cache');
+                    return reject(err);
+                }
+
+                resolve(new Campaign(JSON.parse(reply)));
+            });
         });
     }
 }

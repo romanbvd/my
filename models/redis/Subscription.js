@@ -27,26 +27,23 @@ class Subscription{
     }
 
     init(callbackResult) {
+
         var that = this;
-        async.parallel({
-            media_property: function(callback) {
-                MediaProperty.getMediaPropertyById(that.getMediaPropertyId(), callback);
-            },
-            campaign: function(callback) {
-                Campaign.getCampaignById(that.getCampaignId(), callback);
-            },
-            publisher: function(callback) {
-                Publisher.getPublisherById(that.getPublisherId(), callback);
-            }
-        }, function(err, results) {
+        Promise.all([
+            MediaProperty.getMediaPropertyById(that.getMediaPropertyId()),
+            Campaign.getCampaignById(that.getCampaignId()),
+            Publisher.getPublisherById(that.getPublisherId())
+        ]).then(results => {
             if(err) return callbackResult(err);
             console.log(results.media_property);
-            that._campaign = results.campaign;
-            that._media_property = results.media_property;
-            that._publisher = results.publisher;
+            that._campaign = results.Campaign;
+            that._media_property = results.MediaProperty;
+            that._publisher = results.Publisher;
 
             callbackResult();
-        });
+        },
+            );
+return callbackResult();
     }
 
     getSubscriptionId(){

@@ -59,14 +59,16 @@ class MediaProperty {
     };
 
     static getMediaPropertyById(id, callback){
-        MediaProperty.REDIS.get(id + MediaProperty.REDIS_KEY, function(err, reply) {
-            if(!reply || err) {
-                log.error('Media Property "' + id + '" not found in cache');
-                return callback(err);
-            }
+        return new Promise((resolve, reject) => {
+            MediaProperty.REDIS.get(id + MediaProperty.REDIS_KEY, function (err, reply) {
+                if (!reply || err) {
+                    log.error('Media Property "' + id + '" not found in cache');
+                    return reject(err);
+                }
 
-            callback(null, new MediaProperty(JSON.parse(reply)));
-        });
+                resolve(new MediaProperty(JSON.parse(reply)));
+            });
+        })
     };
 }
 

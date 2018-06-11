@@ -7,13 +7,16 @@ class Publisher{
     }
 
     static getPublisherById(id, callback){
-        Publisher.REDIS.get(id + "_publisher", function(err, reply) {
-            if(!reply || err) {
-                log.error('Publisher "' + id + '" not found in cache');
-                return callback(err);
-            }
+        return new Promise((resolve, reject) => {
+            Publisher.REDIS.get(id + "_publisher", function (err, reply) {
+                if (!reply || err) {
+                    log.error('Publisher "' + id + '" not found in cache');
 
-            callback(null, new Publisher(JSON.parse(reply)));
+                    return reject(err);
+                }
+
+                resolve(new Publisher(JSON.parse(reply)));
+            });
         });
     }
 }
