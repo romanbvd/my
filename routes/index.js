@@ -1,29 +1,21 @@
-var async = require('async');
-var express = require('express');
+let express = require('express');
 
-var User = require('models/User');
-var Subscription = require('models/redis/Subscription');
-var Consumer = require('libs/BaseConsumer');
-var router = express.Router();
+let User = require('models/User');
+let Subscription = require('models/redis/Subscription');
+let Consumer = require('libs/BaseConsumer');
+let router = express.Router();
 
-var Filters = require('models/filters/Filters');
-var Click = require('models/Click');
+let Filters = require('models/filters/Filters');
+let Click = require('models/Click');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    async.parallel({
-            user: function (callback) {
-                User.getUserByRequest(req, callback);
-            },
-            subscription: function (callback) {
-                Subscription.getSubscriptionById(req.query.guid, callback);
-            }
-        },
-        function(err, results){
-            if(err) return next(err);
-
-            Filters.validate(results.user, results.subscription, function(err, subscription){
-                var click = new Click(results.user, results.subscription);
+    Promise.all([
+        User.getUserByRequest(req),
+        Subscription.getSubscriptionById(req.query.guid)
+    ]).then(([user, subscription]) => {
+            Filters.validate(user, subscription, function(err){
+                let click = new Click(user, subscription);
 
                 if(err) {
                     click.saveStopClick(function(){
@@ -35,7 +27,12 @@ router.get('/', function(req, res, next) {
                     });
                 }
             });
-        });
+        },
+        error => {
+            if(err) return next(error);
+        }
+
+    );
 });
 
 router.get('/first_click/:id', function(req, res, next) {

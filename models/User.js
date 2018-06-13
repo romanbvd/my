@@ -33,7 +33,7 @@ User.prototype.init = function(req, callbackResult){
 
             callbackResult();
         },
-        error => {console.log(error);
+        error => {
             callbackResult(error);
     });
 };
@@ -107,10 +107,10 @@ User.prototype.getDeviceType = function(){
 };
 
 User.prototype.getPublisherParams = function(){
-    var that = this;
-    var keys = ['subid1', 'subid2', 'subid3', 'subid4', 'subid5', 'clickid', 'mpid'];
+    let that = this;
+    let keys = ['subid1', 'subid2', 'subid3', 'subid4', 'subid5', 'clickid', 'mpid'];
 
-    var params = [];
+    let params = [];
     keys.forEach(function(item, i, arr){
         if(that.getQueryParam(item)) {
             params[item] = that.getQueryParam(item);
@@ -124,10 +124,16 @@ User.prototype.getReferrer = function(){
 
 };
 
-User.getUserByRequest = function(req, callback){
-    var user = new User();
-    user.init(req, function(){
-        callback(null, user);
+User.getUserByRequest = function(req){
+    return new Promise((resolve, reject) => {
+        let user = new User();
+        user.init(req, function(error){
+            if(!error){
+                resolve(user);
+            }else{
+                reject(error);
+            }
+        });
     });
 };
 
