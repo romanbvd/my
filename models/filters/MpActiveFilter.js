@@ -8,7 +8,7 @@ function MpActiveFilter(user, subscription, callback){
     var advertiserId = subscription.getCampaign().getAdvertiserId();
 
     if(subscription.getMediaProperty().getStatus() != MediaProperty.STATUS_APPROVED){
-            return callback(new FilterException(ERR_CODE, ERR_MESSAGE), null);
+        return callback(new FilterException(ERR_CODE, ERR_MESSAGE), null);
     }
 
     return callback(null, user, subscription);

@@ -22,7 +22,7 @@ class Campaign{
         return this._data.incent == '1';
     }
 
-    static getCampaignById(id, callback){
+    static getCampaignById(id){
         return new Promise((resolve, reject) => {
             Campaign.REDIS.get(id + "_campaign", function (err, reply) {
                 if (!reply || err) {

@@ -1,5 +1,3 @@
-var async = require('async');
-
 var redis = require('libs/redis');
 var util = require('util');
 
@@ -27,23 +25,20 @@ class Subscription{
     }
 
     init(callbackResult) {
-
-        var that = this;
         Promise.all([
-            MediaProperty.getMediaPropertyById(that.getMediaPropertyId()),
-            Campaign.getCampaignById(that.getCampaignId()),
-            Publisher.getPublisherById(that.getPublisherId())
-        ]).then(results => {
-            if(err) return callbackResult(err);
-            console.log(results.media_property);
-            that._campaign = results.Campaign;
-            that._media_property = results.MediaProperty;
-            that._publisher = results.Publisher;
-
-            callbackResult();
-        },
-            );
-return callbackResult();
+            Campaign.getCampaignById(this.getCampaignId()),
+            MediaProperty.getMediaPropertyById(this.getMediaPropertyId()),
+            Publisher.getPublisherById(this.getPublisherId())
+        ]).then(([campaign, media_property, publisher]) => {
+                this._campaign = campaign;
+                this._media_property = media_property;
+                this._publisher = publisher;
+                callbackResult();
+            },
+            error => {
+                callbackResult(error);
+            }
+        );
     }
 
     getSubscriptionId(){
@@ -113,6 +108,7 @@ return callbackResult();
                 log.error(msg);
                 return callback(new SubscriptionException(403, msg));
             }
+
             var subscription = new Subscription(JSON.parse(reply));
             subscription._subscription_id = id;
             subscription.init(function(err){

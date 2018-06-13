@@ -6,7 +6,7 @@ class Publisher{
         this._data = (typeof data == 'object') ? data : {};
     }
 
-    static getPublisherById(id, callback){
+    static getPublisherById(id){
         return new Promise((resolve, reject) => {
             Publisher.REDIS.get(id + "_publisher", function (err, reply) {
                 if (!reply || err) {

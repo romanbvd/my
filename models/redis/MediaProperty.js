@@ -58,7 +58,7 @@ class MediaProperty {
         });
     };
 
-    static getMediaPropertyById(id, callback){
+    static getMediaPropertyById(id){
         return new Promise((resolve, reject) => {
             MediaProperty.REDIS.get(id + MediaProperty.REDIS_KEY, function (err, reply) {
                 if (!reply || err) {

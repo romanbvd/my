@@ -1,5 +1,3 @@
-var async = require('async');
-
 var MobileDetect = require('mobile-detect');
 var GeoLocation = require('models/redis/GeoLocation');
 
@@ -15,8 +13,6 @@ function User(){
 }
 
 User.prototype.init = function(req, callbackResult){
-    that = this;
-
     this._query_params = req.query;
     this._user_agent = req.header('User-agent');
 
@@ -26,24 +22,19 @@ User.prototype.init = function(req, callbackResult){
     this._ip = '176.36.10.243';
     //this._ip = '127.0.0.1';
 
-    async.parallel({
-        isp: function(callback) {
-            GeoLocation.getProviderByIp(that._ip, callback);
-        },
-        country: function(callback) {
-            GeoLocation.getCountryByIp(that._ip, callback);
-        },
-        city: function(callback) {
-            GeoLocation.getCityByIp(that._ip, callback);
-        }
-    }, function(err, results) {
-        if(err) return callbackResult(err);
+    Promise.all([
+        GeoLocation.getProviderByIp(this._ip),
+        GeoLocation.getCountryByIp(this._ip),
+        GeoLocation.getCityByIp(this._ip)
+    ]).then(results => {
+            this._isp = results[0];
+            this._country = results[1];
+            this._city = results[2];
 
-        that._isp = results.isp;
-        that._country = results.country;
-        that._city = results.city;
-
-        callbackResult();
+            callbackResult();
+        },
+        error => {console.log(error);
+            callbackResult(error);
     });
 };
 

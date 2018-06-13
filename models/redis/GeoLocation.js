@@ -18,30 +18,66 @@ GeoLocation.COUNTRY_KEY = 'ip_countries';
 GeoLocation.ISP_KEY = 'ip_isp';
 GeoLocation.ISP_BLACKLISTED = 'isp_black';
 
-GeoLocation.getCountryByIp = function(ip, callback){
-    this.getZrangeValue(GeoLocation.COUNTRY_KEY, ip, callback);
+GeoLocation.getCountryByIp = function(ip){
+    that = this;
+    return new Promise((resolve, reject) => {
+        that.getZrangeValue(GeoLocation.COUNTRY_KEY, ip, function (err, reply) {
+            if (err) {
+                return reject(err);
+            }
+
+            resolve(reply);
+        });
+    });
 };
 
-GeoLocation.getCityByIp = function(ip, callback){
-    this.getZrangeValue(GeoLocation.CITY_KEY, ip, callback);
+GeoLocation.getCityByIp = function(ip){
+    that = this;
+    return new Promise((resolve, reject) => {
+        that.getZrangeValue(GeoLocation.CITY_KEY, ip, function(err, reply){
+            if(err){
+                return reject(err);
+            }
+
+            resolve(reply);
+        });
+    });
 };
 
-GeoLocation.getProviderByIp = function(ip, callback){
-    this.getZrangeValue(GeoLocation.ISP_KEY, ip, callback);
+GeoLocation.getProviderByIp = function(ip){
+    that = this;
+    return new Promise((resolve, reject) => {
+        that.getZrangeValue(GeoLocation.ISP_KEY, ip, function(err, reply){
+            if(err){
+                return reject(err);
+            }
+
+            resolve(reply);
+        });
+    });
+
 };
 
-GeoLocation.getBlaclistedIsp = function(callback){
-    redis.lrange(GeoLocation.ISP_BLACKLISTED, 0, -1, callback);
+GeoLocation.getBlaclistedIsp = function(){
+    return new Promise((resolve, reject) => {
+        redis.lrange(GeoLocation.ISP_BLACKLISTED, 0, -1, function(err, reply){
+            if(err){
+                return reject(err);
+            }
+
+            resolve(reply);
+        });
+    });
 };
 
 GeoLocation.getZrangeValue = function(key, ip, callback){
     redis.zrangebyscore(key, IpHelper.convertIpToDecimal(ip), 4294967296, 'limit', 0, 1, function(err, reply){
         if(err){
-            return callback(new GeoLocationException(403, 'Resolving "' + ip + '" error'));
+            return callback(new GeoLocationException(403, 'Resolving "' + ip + '" ip'));
         }
 
         if(!reply){
-            return callback(new GeoLocationException(403, 'Resolving "' + ip + '" error'));
+            return callback(new GeoLocationException(403, 'Resolving "' + ip + '" ip'));
         }
 
         if(reply.length == 0){
