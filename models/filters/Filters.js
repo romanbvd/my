@@ -7,16 +7,18 @@ var IspFilter = require('models/filters/IspFilter');
 function Filters(){
 }
 
-Filters.validate = function(userModel, subscriptionModel, callbackGeneral) {
-    async.waterfall([
-        function(callback) {
-            callback(null, userModel, subscriptionModel);
-        },
-        MpExistsFilter,
-        MpActiveFilter,
-        IspFilter,
-    ],
-    callbackGeneral);
+Filters.validate = function(user, subscription, callbackGeneral) {
+    Promise.all([
+        MpExistsFilter.check(user, subscription),
+        MpActiveFilter.check(user, subscription),
+        IspFilter.check(user, subscription),
+    ]).then(success => {
+        callbackGeneral()
+        }, error => {
+
+        });
+
+
 };
 
 

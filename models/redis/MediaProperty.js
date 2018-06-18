@@ -60,7 +60,6 @@ class MediaProperty {
 
     static getMediaPropertyById(id){
         return new Promise((resolve, reject) => {
-            console.log(id + MediaProperty.REDIS_KEY);
             MediaProperty.REDIS.get(id + MediaProperty.REDIS_KEY, function (err, reply) {
                 if (!reply || err) {
                     log.error('Media Property "' + id + '" not found in cache');
