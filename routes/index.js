@@ -14,25 +14,19 @@ router.get('/', function(req, res, next) {
         User.getUserByRequest(req),
         Subscription.getSubscriptionById(req.query.guid)
     ]).then(([user, subscription]) => {
-            Filters.validate(user, subscription, function(err){
-                let click = new Click(user, subscription);
-
-                if(err) {
-                    click.saveStopClick(function(){
-                        return next(err);
-                    });
-                }else {
-                    click.saveClick(function () {
-                        res.render('index', {title: 'mmm'});
-                    });
-                }
+        let click = new Click(user, subscription);
+        Filters.validate(user, subscription).then(success => {
+            click.saveClick(function () {
+                res.render('index', {title: 'mmm'});
             });
-        },
-        error => {
-            if(err) return next(error);
-        }
-
-    );
+        }).catch(reject => {
+            click.saveStopClick(function(){
+                return next(err);
+            });
+        });
+    }).catch(error => {
+        return next(error);
+    });
 });
 
 router.get('/first_click/:id', function(req, res, next) {

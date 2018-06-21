@@ -8,17 +8,11 @@ function Filters(){
 }
 
 Filters.validate = function(user, subscription, callbackGeneral) {
-    Promise.all([
+    return Promise.all([
         MpExistsFilter.check(user, subscription),
         MpActiveFilter.check(user, subscription),
         IspFilter.check(user, subscription),
-    ]).then(success => {
-        callbackGeneral()
-        }, error => {
-
-        });
-
-
+    ]);
 };
 
 

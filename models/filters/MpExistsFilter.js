@@ -1,7 +1,7 @@
-var FilterException = require('models/filters/FilterException');
+const FilterException = require('models/filters/FilterException');
 
-var ERR_MESSAGE = 'MP absent';
-var ERR_CODE = 118;
+const ERR_MESSAGE = 'MP absent';
+const ERR_CODE = 118;
 
 class MpExistsFilter{
     static check(userModel, subscription){

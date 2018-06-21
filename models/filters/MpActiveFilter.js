@@ -1,17 +1,21 @@
-var MediaProperty = require('models/redis/MediaProperty');
-var FilterException = require('models/filters/FilterException');
+const MediaProperty = require('models/redis/MediaProperty');
+const FilterException = require('models/filters/FilterException');
 
-var ERR_MESSAGE = 'MP is not approved';
-var ERR_CODE = 110;
+const ERR_MESSAGE = 'MP is not approved';
+const ERR_CODE = 110;
 
-function MpActiveFilter(user, subscription, callback){
-    var advertiserId = subscription.getCampaign().getAdvertiserId();
+class MpActiveFilter{
+    static check(userModel, subscription){
+        return new Promise((resolve, reject) => {
+            let advertiserId = subscription.getCampaign().getAdvertiserId();
 
-    if(subscription.getMediaProperty().getStatus() != MediaProperty.STATUS_APPROVED){
-        return callback(new FilterException(ERR_CODE, ERR_MESSAGE), null);
+            if(subscription.getMediaProperty().getStatus() != MediaProperty.STATUS_APPROVED){
+                return reject(new FilterException(ERR_CODE, ERR_MESSAGE), null);
+            }
+
+            return resolve();
+        });
     }
-
-    return callback(null, user, subscription);
 }
 
 module.exports = MpActiveFilter;
