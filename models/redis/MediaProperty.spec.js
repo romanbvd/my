@@ -5,8 +5,9 @@ const assert = require('chai').assert;
 const redis = require('libs/redis');
 const MediaProperty = require('./MediaProperty');
 const mediaPropertyJson = require('./MediaPropertyData');
-let mediaProperty = null;
+let mpPromise = null;
 
+//https://medium.com/caffeine-and-testing/async-testing-with-mocha-with-callbacks-and-promises-5d0002661b3f
 describe('Test Media Propert Redis module', function () {
 
     before(function () {
@@ -14,10 +15,10 @@ describe('Test Media Propert Redis module', function () {
 
         MediaProperty.REDIS = redis;
 
-        let mp = MediaProperty.getMediaPropertyById('test');
-        mp.then(result => {
+        mpPromise = MediaProperty.getMediaPropertyById('test');
+        /*mp.then(result => {
             console.log('sss');
-        }, error => {console.log(error)});
+        }, error => {console.log(error)});*/
         /*redis.get('test_' + MediaProperty.REDIS_KEY, function(a, b){
             console.log(a);console.log(b);
         });*/
@@ -26,6 +27,13 @@ describe('Test Media Propert Redis module', function () {
     after(function () {
         // completely restore all fakes created through the sandbox
        // sinon.restore();
+    });
+
+    it('Test Promise', function(){
+        return mpPromise.then(result => {
+            assert.equal(result instanceof MediaProperty, false);
+            //done();
+        })
     });
 
     it('Test getName() function', function () {
