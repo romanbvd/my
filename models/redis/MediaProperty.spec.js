@@ -14,14 +14,7 @@ describe('Test Media Propert Redis module', function () {
         sinon.stub(redis, 'get').withArgs('test' + MediaProperty.REDIS_KEY).callsArgWith(1, null, JSON.stringify(mediaPropertyJson));
 
         MediaProperty.REDIS = redis;
-
         mpPromise = MediaProperty.getMediaPropertyById('test');
-        /*mp.then(result => {
-            console.log('sss');
-        }, error => {console.log(error)});*/
-        /*redis.get('test_' + MediaProperty.REDIS_KEY, function(a, b){
-            console.log(a);console.log(b);
-        });*/
     });
 
     after(function () {
@@ -29,25 +22,41 @@ describe('Test Media Propert Redis module', function () {
        // sinon.restore();
     });
 
-    it('Test Promise', function(){
+    it('Test getMediaPropertyById', function(){
         return mpPromise.then(result => {
-            assert.equal(result instanceof MediaProperty, false);
-            //done();
-        })
+            assert.equal(result instanceof MediaProperty, true);
+        });
     });
 
     it('Test getName() function', function () {
-
-        //assert.equal(mediaProperty.getName(), 'Property134');
-      //  assert.notEqual(mediaProperty.getName(), '');
+        return mpPromise.then(result => {
+            assert.equal(typeof result.getName, 'function');
+            assert.equal(result.getName(), 'Property134');
+        });
     });
 
     it('Test getMediaPropertyId() function', function () {
-       // assert.equal(mediaProperty.getMediaPropertyId(), '5756cb35dd1213b40e8b457b');
+        return mpPromise.then(result => {
+            assert.equal(typeof result.getMediaPropertyId, 'function');
+            assert.equal(result.getMediaPropertyId(), '5756cb35dd1213b40e8b457b');
+        });
+    });
+
+    it('Test isIncent() function', function () {
+        return mpPromise.then(result => {
+            assert.equal(typeof result.isIncent, 'function');
+            assert.isBoolean(result.isIncent());
+            assert.equal(result.isIncent(), false);
+        });
     });
 
     it('Test markAsIncent() function', function () {
-      //  assert.equal(mediaProperty.getMediaPropertyId(), '5756cb35dd1213b40e8b457b');
-        //isIncent(){}
+        return mpPromise.then(result => {
+            assert.equal(result.isIncent(), false);
+
+            result.markAsIncent();
+            
+            assert.equal(result.isIncent(), true);
+        });
     });
 });
