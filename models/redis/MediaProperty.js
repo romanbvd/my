@@ -20,7 +20,12 @@ class MediaProperty {
     };
 
     getMediaPropertyId(){
-        return this._data._id || '';
+        let id = this._data._id || '';
+        if(!helper.MongoDb.isValid(id)){
+            return false;
+        }
+
+        return id;
     };
 
     getStatus(){
@@ -41,19 +46,19 @@ class MediaProperty {
     };
 
     isBlockedForAdvertiser(advertiserId, callback){
-        var mpId = this.getMediaPropertyId();
-        if(!helper.MongoDb.isValid(mpId)){
-            log.error(helper.MongoDb.INVALID_OBJECT_ID + ' for "mediaPropertyId"');
-        }
+        let mpId = this.getMediaPropertyId();
 
+        console.log(advertiserId);
         if(!helper.MongoDb.isValid(advertiserId)){
-            log.error(helper.MongoDb.INVALID_OBJECT_ID + ' for "advertiserId"');
+            let msg = helper.MongoDb.INVALID_OBJECT_ID + ' for "advertiserId"';
+            log.error(msg);
+            return callback(msg);
         }
 
         MediaProperty.REDIS.get(this.getMediaPropertyId() + '_' + advertiserId + '_blocked_mp', function(err, reply) {
             if(err) callback(err);
 
-            var result = (reply == null) ? false : true;
+            let result = (reply == null) ? false : true;
             callback(null, result);
         });
     };
