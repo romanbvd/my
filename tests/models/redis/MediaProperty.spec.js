@@ -7,6 +7,8 @@ const MediaProperty = require('models/redis/MediaProperty');
 const mediaPropertyJson = require('./MediaPropertyData');
 let mpPromise = null;
 
+const mpId = '5756cb35dd1213b40e8b457b';
+const advId = '556ebc094e8fb47d3e8b456c';
 //https://medium.com/caffeine-and-testing/async-testing-with-mocha-with-callbacks-and-promises-5d0002661b3f
 describe('Test Media Propert Redis module', function () {
     before(function () {
@@ -14,14 +16,15 @@ describe('Test Media Propert Redis module', function () {
         let setStub = sinon.stub(redis, 'set');
 
         getStub.withArgs('test' + MediaProperty.REDIS_KEY).callsArgWith(1, null, JSON.stringify(mediaPropertyJson));
-        setStub.withArgs('5756cb35dd1213b40e8b457b' + MediaProperty.REDIS_KEY).callsArgWith(2, 'some_data');
+        getStub.withArgs(mpId + '_' + advId + '_blocked_mp').callsArgWith(1, null, 'ok');
+
+        setStub.withArgs(mpId + MediaProperty.REDIS_KEY).callsArgWith(2, 'some_data');
 
         MediaProperty.REDIS = redis;
         mpPromise = MediaProperty.getMediaPropertyById('test');
     });
 
     after(function () {
-        // completely restore all fakes created through the sandbox
         sinon.restore();
     });
 
@@ -41,11 +44,11 @@ describe('Test Media Propert Redis module', function () {
     it('Test getMediaPropertyId() function', function () {
         return mpPromise.then(result => {
             assert.equal(typeof result.getMediaPropertyId, 'function');
-            assert.equal(result.getMediaPropertyId(), '5756cb35dd1213b40e8b457b');
+            assert.equal(result.getMediaPropertyId(), mpId);
 
             result._data._id = '122';
             assert.equal(result.getMediaPropertyId(), false);
-            result._data._id = '5756cb35dd1213b40e8b457b';
+            result._data._id = mpId;
         });
     });
 
@@ -75,12 +78,13 @@ describe('Test Media Propert Redis module', function () {
     });
 
     it('Test isBlockedForAdvertiser()', function () {
-        //sandbox.stub(c);
-        //sandbox.restore();
         return mpPromise.then(result => {
-            result.isBlockedForAdvertiser('sas', function(data){
-              //  console.log(data);
-              //  assert.equal(data, 'some_data');
+            result.isBlockedForAdvertiser(advId + '2', function(err, data){
+                assert.equal(err, 'Invalid MongoId for "advertiserId"');
+            });
+
+            result.isBlockedForAdvertiser(advId, function(err, reply){
+                assert.equal(reply, true);
             });
         });
     });

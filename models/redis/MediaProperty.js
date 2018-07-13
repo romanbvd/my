@@ -48,7 +48,6 @@ class MediaProperty {
     isBlockedForAdvertiser(advertiserId, callback){
         let mpId = this.getMediaPropertyId();
 
-        console.log(advertiserId);
         if(!helper.MongoDb.isValid(advertiserId)){
             let msg = helper.MongoDb.INVALID_OBJECT_ID + ' for "advertiserId"';
             log.error(msg);
