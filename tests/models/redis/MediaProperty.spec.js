@@ -9,19 +9,21 @@ let mpPromise = null;
 
 const mpId = '5756cb35dd1213b40e8b457b';
 const advId = '556ebc094e8fb47d3e8b456c';
+
+//https://www.kv.by/archive/index2009421107.htm
 //https://medium.com/caffeine-and-testing/async-testing-with-mocha-with-callbacks-and-promises-5d0002661b3f
 describe('Test Media Propert Redis module', function () {
     before(function () {
         let getStub = sinon.stub(redis, 'get');
         let setStub = sinon.stub(redis, 'set');
 
-        getStub.withArgs('test' + MediaProperty.REDIS_KEY).callsArgWith(1, null, JSON.stringify(mediaPropertyJson));
+        getStub.withArgs(mpId + MediaProperty.REDIS_KEY).callsArgWith(1, null, JSON.stringify(mediaPropertyJson));
         getStub.withArgs(mpId + '_' + advId + '_blocked_mp').callsArgWith(1, null, 'ok');
 
         setStub.withArgs(mpId + MediaProperty.REDIS_KEY).callsArgWith(2, 'some_data');
 
         MediaProperty.REDIS = redis;
-        mpPromise = MediaProperty.getMediaPropertyById('test');
+        mpPromise = MediaProperty.getMediaPropertyById(mpId);
     });
 
     after(function () {

@@ -1,6 +1,13 @@
-var redis = require('libs/redis');
-var log = require('libs/log')(module);
-var helper = require('libs/helper');
+let redis = require('libs/redis');
+let log = require('libs/log')(module);
+let helper = require('libs/helper');
+let util = require('util');
+
+function MediaPropertyException(code, message){
+    this.message = message;
+    this.code = code;
+}
+util.inherits(MediaPropertyException, Error);
 
 class MediaProperty {
     static get STATUS_PENDING(){return '0'};
@@ -64,6 +71,12 @@ class MediaProperty {
 
     static getMediaPropertyById(id){
         return new Promise((resolve, reject) => {
+            if (!id || !helper.MongoDb.isValid(id)) {
+                let msg = 'MediaProperty ID not defined or wrong';
+                log.error(msg);
+                return reject(new MediaPropertyException(403, msg));
+            }
+
             MediaProperty.REDIS.get(id + MediaProperty.REDIS_KEY, function (err, reply) {
                 if (!reply || err) {
                     log.error('Media Property "' + id + '" not found in cache');

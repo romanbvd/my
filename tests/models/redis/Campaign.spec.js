@@ -4,6 +4,7 @@ const assert = require('chai').assert;
 
 const redis = require('libs/redis');
 
+const Campaign = require('models/redis/Campaign');
 const campaignJson = require('./CampaignData');
 let mpPromise = null;
 
@@ -24,27 +25,40 @@ describe('Test Campaign Redis module', function () {
     });
 
     it('Test getCampaignById()', function(){
-        //console.log(callback(1, function(){console.log('s')})); // No return value, no exception
-        //console.log(callback(42, function(){console.log('2')})); // Returns 1
+        return campaignPromise.then(result => {
+            assert.equal(result instanceof Campaign, true);
+        });
     });
 
     it('Test getTitle()', function(){
-        //console.log(callback(1, function(){console.log('s')})); // No return value, no exception
-        //console.log(callback(42, function(){console.log('2')})); // Returns 1
+        return campaignPromise.then(result => {
+            assert.equal(typeof result.getTitle, 'function');
+            assert.equal(result.getTitle(), 'campaign for changes 72');
+        });
     });
 
     it('Test getAdvertiserId()', function(){
-        //console.log(callback(1, function(){console.log('s')})); // No return value, no exception
-        //console.log(callback(42, function(){console.log('2')})); // Returns 1
+        return campaignPromise.then(result => {
+            assert.equal(typeof result.getAdvertiserId, 'function');
+            assert.equal(result.getAdvertiserId(), '561522b19879cad9410041a7');
+        });
     });
 
     it('Test getPayout()', function(){
-        //console.log(callback(1, function(){console.log('s')})); // No return value, no exception
-        //console.log(callback(42, function(){console.log('2')})); // Returns 1
+        return campaignPromise.then(result => {
+            assert.equal(typeof result.getPayout, 'function');
+            assert.equal(typeof result.getPayout(), 'object');
+
+            let payouts = result.getPayout();
+            assert.equal(payouts[0].payout, '7')
+            assert.equal(payouts[1].payout, '13')
+        });
     });
 
     it('Test isIncent()', function(){
-        //console.log(callback(1, function(){console.log('s')})); // No return value, no exception
-        //console.log(callback(42, function(){console.log('2')})); // Returns 1
+        return campaignPromise.then(result => {
+            assert.equal(typeof result.isIncent, 'function');
+            assert.equal(result.isIncent(), false);
+        });
     });
 });

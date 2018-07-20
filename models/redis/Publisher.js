@@ -1,14 +1,30 @@
-var redis = require('libs/redis');
-var log = require('libs/log')(module);
+let redis = require('libs/redis');
+let log = require('libs/log')(module);
+let util = require('util');
+let helper = require('libs/helper');
+
+function PublisherException(code, message){
+    this.message = message;
+    this.code = code;
+}
+util.inherits(PublisherException, Error);
 
 class Publisher{
+    static get REDIS_KEY(){return "_publisher";};
+
     constructor(data){
         this._data = (typeof data == 'object') ? data : {};
     }
 
     static getPublisherById(id){
         return new Promise((resolve, reject) => {
-            Publisher.REDIS.get(id + "_publisher", function (err, reply) {
+            if (!id || !helper.MongoDb.isValid(id)) {
+                let msg = 'Publisher ID not defined or wrong';
+                log.error(msg);
+                return reject(new PublisherException(403, msg));
+            }
+
+            Publisher.REDIS.get(id + Publisher.REDIS_KEY, function (err, reply) {
                 if (!reply || err) {
                     log.error('Publisher "' + id + '" not found in cache');
 

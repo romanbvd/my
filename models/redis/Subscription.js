@@ -1,11 +1,11 @@
-var redis = require('libs/redis');
-var util = require('util');
+let redis = require('libs/redis');
+let util = require('util');
 
-var log = require('libs/log')(module);
+let log = require('libs/log')(module);
 
-var Campaign = require('models/redis/Campaign');
-var MediaProperty = require('models/redis/MediaProperty');
-var Publisher = require('models/redis/Publisher');
+let Campaign = require('models/redis/Campaign');
+let MediaProperty = require('models/redis/MediaProperty');
+let Publisher = require('models/redis/Publisher');
 
 function SubscriptionException(code, message){
     this.message = message;
